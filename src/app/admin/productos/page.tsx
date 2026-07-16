@@ -27,8 +27,8 @@ export default function AdminProductsPage() {
         console.error('Error fetching products from Supabase:', error);
         setProducts(mockProducts);
         setIsUsingMock(true);
-      } else if (prodsData && prodsData.length > 0) {
-        const formattedProducts: Product[] = prodsData.map((p: any) => ({
+      } else {
+        const formattedProducts: Product[] = (prodsData || []).map((p: any) => ({
           id: p.id,
           title: p.title,
           slug: p.slug,
@@ -46,10 +46,6 @@ export default function AdminProductsPage() {
         }));
         setProducts(formattedProducts);
         setIsUsingMock(false);
-      } else {
-        console.log('No products found in Supabase or query empty, falling back to mockProducts');
-        setProducts(mockProducts);
-        setIsUsingMock(true);
       }
     } catch (err) {
       console.error('Catch block error fetching products:', err);

@@ -54,10 +54,9 @@ function CatalogoContent() {
 
         if (error) {
           console.error('Error fetching products from Supabase:', error);
-        }
-
-        if (prodsData && prodsData.length > 0) {
-          const formattedProducts: Product[] = prodsData.map((p: any) => ({
+          setProducts(mockProducts);
+        } else {
+          const formattedProducts: Product[] = (prodsData || []).map((p: any) => ({
             id: p.id,
             title: p.title,
             slug: p.slug,
@@ -74,9 +73,6 @@ function CatalogoContent() {
             is_available: p.is_available
           }));
           setProducts(formattedProducts);
-        } else {
-          console.log('No products found in Supabase or query empty, falling back to mockProducts');
-          setProducts(mockProducts);
         }
       } catch (err) {
         console.error('Catch block error fetching catalog:', err);
