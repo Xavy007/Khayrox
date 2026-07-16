@@ -20,12 +20,10 @@ function CatalogoContent() {
   const [techniques, setTechniques] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Sync state with search params if they are present
+  // Sync state with search params
   useEffect(() => {
-    const techParam = searchParams.get('technique');
-    const catParam = searchParams.get('category');
-    if (techParam) setSelectedTechnique(techParam);
-    if (catParam) setSelectedCategory(catParam);
+    setSelectedTechnique(searchParams.get('technique'));
+    setSelectedCategory(searchParams.get('category'));
   }, [searchParams]);
 
   useEffect(() => {
