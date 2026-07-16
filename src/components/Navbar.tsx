@@ -6,6 +6,8 @@ import { ShoppingCart, Menu, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useCartStore } from '@/store/cartStore';
 
+import Image from 'next/image';
+
 export default function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
@@ -25,8 +27,16 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 w-full border-b border-primary/20 bg-background/80 backdrop-blur-md">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="font-orbitron text-2xl font-bold text-primary drop-shadow-[0_0_10px_rgba(0,212,255,0.8)] tracking-wider">
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="relative w-8 h-8 rounded-lg overflow-hidden border border-primary/40 shadow-[0_0_15px_rgba(0,212,255,0.4)] transition-transform duration-300 group-hover:scale-110">
+              <Image
+                src="/logo-icon.jpg"
+                alt="Logo KHAYROX"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <span className="font-orbitron text-2xl font-black bg-gradient-to-r from-white via-cyan-400 to-blue-500 bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(0,212,255,0.6)] tracking-widest transition-all duration-300 group-hover:drop-shadow-[0_0_25px_rgba(0,212,255,0.9)]">
               KHAYROX
             </span>
           </Link>

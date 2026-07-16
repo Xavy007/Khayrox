@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 
 export default function Home() {
   const supabase = createClient();
-  const [heroBannerUrl, setHeroBannerUrl] = useState('/hero-showcase-skinny.png');
+  const [heroBannerUrl, setHeroBannerUrl] = useState('/hero-showcase-marble.png');
 
   useEffect(() => {
     const fetchBanner = async () => {
@@ -155,11 +155,30 @@ export default function Home() {
               <span className="font-medium tracking-wide">Descubre la Nueva Colección 2026</span>
             </motion.div>
 
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, delay: 0.2 }}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-surface/50 border border-primary/30 backdrop-blur-md mb-6 shadow-[0_0_20px_rgba(0,212,255,0.2)] w-fit"
+            >
+              <div className="relative w-5 h-5 rounded-md overflow-hidden border border-primary/40">
+                <Image 
+                  src="/logo-icon.jpg" 
+                  fill
+                  alt="KHAYROX Logo Icon" 
+                  className="object-cover"
+                />
+              </div>
+              <span className="text-[10px] sm:text-xs font-mono font-bold tracking-wider text-primary uppercase">
+                Estudio Creativo
+              </span>
+            </motion.div>
+
             <motion.h1
               initial={{ opacity: 0, filter: "blur(20px)" }}
               animate={{ opacity: 1, filter: "blur(0px)" }}
               transition={{ duration: 1.2, delay: 0.1, ease: "easeOut" }}
-              className="text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tighter text-white font-orbitron mb-6 leading-tight"
+              className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-widest bg-gradient-to-r from-white via-cyan-300 to-blue-500 bg-clip-text text-transparent font-orbitron mb-6 leading-tight drop-shadow-[0_0_30px_rgba(0,212,255,0.5)]"
             >
               KHAYROX
             </motion.h1>
