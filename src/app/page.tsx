@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
-import { motion, useScroll, useTransform, useSpring, useMotionValue, useMotionTemplate } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, useMotionValue, useMotionTemplate, Variants } from "framer-motion";
 
 export default function Home() {
   const containerRef = useRef<HTMLElement>(null);
@@ -58,12 +58,12 @@ export default function Home() {
   const card3Ref = useRef<HTMLDivElement>(null);
 
   // Animations variants
-  const fadeIn = {
+  const fadeIn: Variants = {
     hidden: { opacity: 0, y: 50 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
   };
 
-  const staggerContainer = {
+  const staggerContainer: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
