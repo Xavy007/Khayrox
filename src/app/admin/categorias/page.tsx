@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Plus, Edit, Trash2, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 
@@ -13,13 +13,14 @@ interface Category {
 export default function AdminCategoriasPage() {
   const supabase = createClient();
   const [isAdding, setIsAdding] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   
   const [newName, setNewName] = useState('');
   const [newSlug, setNewSlug] = useState('');
 
-  // Auto-generar slug basado en el nombre
+  // Auto-generar slug basado en el nombre (solo si no se está editando o si el usuario quiere)
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setNewName(val);
@@ -44,18 +45,47 @@ export default function AdminCategoriasPage() {
   const handleSave = async () => {
     if (!newName || !newSlug) return;
     
-    const { data, error } = await supabase.from('categories').insert([
-      { name: newName, slug: newSlug }
-    ]).select();
+    if (editingCategory) {
+      // Update existing category
+      const { error } = await supabase
+        .from('categories')
+        .update({ name: newName, slug: newSlug })
+        .eq('id', editingCategory.id);
 
-    if (error) {
-      alert("Error al guardar categoría: " + error.message);
+      if (error) {
+        alert("Error al actualizar categoría: " + error.message);
+      } else {
+        alert("Categoría actualizada correctamente.");
+        handleCancel();
+        fetchCategories();
+      }
     } else {
-      setNewName('');
-      setNewSlug('');
-      setIsAdding(false);
-      fetchCategories();
+      // Insert new category
+      const { error } = await supabase.from('categories').insert([
+        { name: newName, slug: newSlug }
+      ]);
+
+      if (error) {
+        alert("Error al guardar categoría: " + error.message);
+      } else {
+        handleCancel();
+        fetchCategories();
+      }
     }
+  };
+
+  const handleStartEdit = (cat: Category) => {
+    setEditingCategory(cat);
+    setNewName(cat.name);
+    setNewSlug(cat.slug);
+    setIsAdding(true);
+  };
+
+  const handleCancel = () => {
+    setNewName('');
+    setNewSlug('');
+    setEditingCategory(null);
+    setIsAdding(false);
   };
 
   const handleDelete = async (id: string) => {
@@ -74,18 +104,23 @@ export default function AdminCategoriasPage() {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-orbitron font-bold text-foreground">Categorías</h1>
         <button 
-          onClick={() => setIsAdding(!isAdding)}
+          onClick={() => {
+            if (isAdding) handleCancel();
+            else setIsAdding(true);
+          }}
           className="flex items-center gap-2 bg-primary text-[#050914] px-4 py-2 rounded-lg font-bold hover:bg-primary/90 transition-colors shadow-[0_0_15px_rgba(0,212,255,0.4)]"
         >
-          <Plus className="w-5 h-5" />
-          Nueva Categoría
+          {isAdding && editingCategory ? <X className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+          {isAdding && editingCategory ? 'Cancelar Edición' : 'Nueva Categoría'}
         </button>
       </div>
 
       {isAdding && (
         <div className="bg-surface border border-primary/20 p-6 rounded-xl shadow-sm mb-6 flex gap-4 items-end flex-wrap">
           <div className="flex-1 min-w-[200px]">
-            <label className="block text-sm font-bold text-foreground mb-2">Nombre de la Categoría</label>
+            <label className="block text-sm font-bold text-foreground mb-2">
+              {editingCategory ? 'Editar Nombre de Categoría' : 'Nombre de la Categoría'}
+            </label>
             <input 
               type="text"
               value={newName}
@@ -104,12 +139,20 @@ export default function AdminCategoriasPage() {
               className="w-full bg-background border border-primary/20 rounded-lg px-4 py-2 text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
             />
           </div>
-          <button 
-            onClick={handleSave}
-            className="h-[42px] px-6 bg-primary text-[#050914] font-bold rounded-lg hover:bg-primary/90 transition-colors"
-          >
-            Guardar
-          </button>
+          <div className="flex gap-2">
+            <button 
+              onClick={handleSave}
+              className="h-[42px] px-6 bg-primary text-[#050914] font-bold rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"
+            >
+              {editingCategory ? 'Actualizar' : 'Guardar'}
+            </button>
+            <button 
+              onClick={handleCancel}
+              className="h-[42px] px-4 bg-surface border border-primary/20 text-muted font-bold rounded-lg hover:bg-primary/5 transition-colors cursor-pointer"
+            >
+              Cancelar
+            </button>
+          </div>
         </div>
       )}
 
@@ -138,6 +181,13 @@ export default function AdminCategoriasPage() {
                   <td className="p-4 text-muted">{cat.slug}</td>
                   <td className="p-4">
                     <div className="flex justify-end gap-2">
+                      <button 
+                        onClick={() => handleStartEdit(cat)}
+                        className="p-2 text-primary hover:bg-primary/10 rounded transition-colors" 
+                        title="Editar"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
                       <button 
                         onClick={() => handleDelete(cat.id)}
                         className="p-2 text-red-400 hover:bg-red-400/10 rounded transition-colors" 
