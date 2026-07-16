@@ -16,7 +16,7 @@ export default function AdminProductsPage() {
     setLoading(true);
     try {
       const { data: prodsData, error } = await supabase.from('products').select(`
-        id, title, slug, description_short, description_long, base_price, min_order_quantity, estimated_delivery_time,
+        id, title, slug, description_short, description_long, base_price, min_order_quantity, estimated_delivery_time, is_available,
         product_images ( url, is_primary ),
         product_categories ( categories ( name, slug ) ),
         product_techniques ( techniques ( slug, name ) ),
@@ -41,7 +41,8 @@ export default function AdminProductsPage() {
           techniques: p.product_techniques?.map((pt: any) => pt.techniques?.name) || [],
           images: p.product_images || [],
           tags: p.product_tags?.map((t: any) => t.tag) || [],
-          variants: []
+          variants: [],
+          is_available: p.is_available
         }));
         setProducts(formattedProducts);
         setIsUsingMock(false);
@@ -127,7 +128,15 @@ export default function AdminProductsPage() {
                     <td className="p-4 text-muted capitalize">{product.category}</td>
                     <td className="p-4 text-muted">Bs. {product.base_price}</td>
                     <td className="p-4">
-                      <span className="px-2 py-1 bg-green-500/10 text-green-400 text-xs rounded-full border border-green-500/20">Publicado</span>
+                      {product.is_available !== false ? (
+                        <span className="px-2 py-1 bg-green-500/10 text-green-400 text-xs rounded-full border border-green-500/20 font-bold uppercase tracking-wider text-[10px]">
+                          Disponible
+                        </span>
+                      ) : (
+                        <span className="px-2 py-1 bg-red-500/10 text-red-400 text-xs rounded-full border border-red-500/20 font-bold uppercase tracking-wider text-[10px]">
+                          Agotado
+                        </span>
+                      )}
                     </td>
                     <td className="p-4">
                       <div className="flex justify-end gap-2">

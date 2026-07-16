@@ -24,6 +24,7 @@ export type Product = {
   images: { url: string; is_primary: boolean }[];
   variants: { name: string; values: string[] }[];
   tags: string[];
+  is_available?: boolean;
 };
 
 export const techniques: Technique[] = [

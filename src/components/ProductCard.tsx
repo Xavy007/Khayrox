@@ -3,9 +3,15 @@ import Link from 'next/link';
 import { Product } from '@/lib/data';
 
 export default function ProductCard({ product }: { product: Product }) {
+  const isAvailable = product.is_available !== false;
+
   return (
     <Link href={`/catalogo/${product.slug}`} className="group block">
-      <div className="relative overflow-hidden rounded-xl border border-primary/10 bg-surface transition-all duration-300 hover:border-primary/50 hover:shadow-[0_0_20px_rgba(0,212,255,0.2)]">
+      <div className={`relative overflow-hidden rounded-xl border border-primary/10 bg-surface transition-all duration-300 ${
+        isAvailable 
+          ? 'hover:border-primary/50 hover:shadow-[0_0_20px_rgba(0,212,255,0.2)]' 
+          : 'opacity-65 hover:border-red-500/30'
+      }`}>
         {/* Image Container */}
         <div className="relative aspect-square w-full overflow-hidden bg-background">
           <Image
@@ -17,6 +23,13 @@ export default function ProductCard({ product }: { product: Product }) {
           />
           {/* Overlay gradient on hover */}
           <div className="absolute inset-0 bg-gradient-to-t from-surface/80 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+          
+          {/* Out of Stock Badge */}
+          {!isAvailable && (
+            <div className="absolute top-2 right-2 bg-red-500/90 text-[#050914] text-[9px] sm:text-[10px] font-orbitron font-bold uppercase tracking-wider px-2 py-0.5 sm:px-2.5 sm:py-1 rounded border border-red-500/30 shadow-[0_0_10px_rgba(239,68,68,0.3)] z-10">
+              Agotado
+            </div>
+          )}
         </div>
 
         {/* Content */}
@@ -42,8 +55,8 @@ export default function ProductCard({ product }: { product: Product }) {
               <span className="text-[10px] sm:text-sm font-normal text-muted mr-1">desde</span>
               Bs. {product.base_price}
             </span>
-            <span className="text-primary text-xs sm:text-sm font-medium hover:underline">
-              Ver detalles &rarr;
+            <span className={`text-xs sm:text-sm font-medium hover:underline ${isAvailable ? 'text-primary' : 'text-red-400'}`}>
+              {isAvailable ? 'Ver detalles →' : 'Consultar disponibilidad →'}
             </span>
           </div>
         </div>

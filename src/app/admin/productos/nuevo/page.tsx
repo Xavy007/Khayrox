@@ -21,7 +21,8 @@ export default function NuevoProductoPage() {
     base_price: '',
     tags: '',
     selectedCategories: [] as string[],
-    selectedTechniques: [] as string[]
+    selectedTechniques: [] as string[],
+    is_available: true
   });
 
   useEffect(() => {
@@ -80,7 +81,8 @@ export default function NuevoProductoPage() {
           description_short: formData.description_short,
           description_long: formData.description_long,
           base_price: Number(formData.base_price) || 0,
-          is_published: true
+          is_published: true,
+          is_available: formData.is_available
         }
       ]).select().single();
 
@@ -124,7 +126,7 @@ export default function NuevoProductoPage() {
       }
 
       alert('¡Producto guardado exitosamente!');
-      setFormData({ title: '', description_short: '', description_long: '', base_price: '', tags: '', selectedCategories: [], selectedTechniques: [] });
+      setFormData({ title: '', description_short: '', description_long: '', base_price: '', tags: '', selectedCategories: [], selectedTechniques: [], is_available: true });
       setImageFile(null);
       setImagePreview(null);
     } catch (error: any) {
@@ -207,7 +209,7 @@ export default function NuevoProductoPage() {
             />
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-bold text-foreground mb-2">Precio Base Referencial (Bs.)</label>
               <input 
@@ -225,6 +227,17 @@ export default function NuevoProductoPage() {
                 onChange={(e) => setFormData({...formData, tags: e.target.value})}
                 className="w-full bg-background border border-primary/20 rounded-lg px-4 py-2 text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
               />
+            </div>
+            <div className="flex flex-col justify-end pb-1.5">
+              <label className="flex items-center gap-2.5 cursor-pointer h-10 select-none">
+                <input 
+                  type="checkbox"
+                  checked={formData.is_available}
+                  onChange={(e) => setFormData({...formData, is_available: e.target.checked})}
+                  className="rounded border-primary/30 text-primary focus:ring-primary bg-background w-5 h-5 cursor-pointer"
+                />
+                <span className="text-sm font-bold text-foreground">Disponible para Venta</span>
+              </label>
             </div>
           </div>
 

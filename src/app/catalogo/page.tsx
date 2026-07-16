@@ -47,7 +47,7 @@ function CatalogoContent() {
 
         // Fetch products with their relationships
         const { data: prodsData, error } = await supabase.from('products').select(`
-          id, title, slug, description_short, description_long, base_price, min_order_quantity, estimated_delivery_time,
+          id, title, slug, description_short, description_long, base_price, min_order_quantity, estimated_delivery_time, is_available,
           product_images ( url, is_primary ),
           product_categories ( categories ( slug ) ),
           product_techniques ( techniques ( slug, name ) ),
@@ -72,7 +72,8 @@ function CatalogoContent() {
             techniques: p.product_techniques?.map((pt: any) => pt.techniques?.slug) || [],
             images: p.product_images || [],
             tags: p.product_tags?.map((t: any) => t.tag) || [],
-            variants: []
+            variants: [],
+            is_available: p.is_available
           }));
           setProducts(formattedProducts);
         } else {
