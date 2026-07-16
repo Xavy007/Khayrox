@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Loader2, Image as ImageIcon, X } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { compressImage } from '@/lib/imageCompressor';
 
 export default function NuevoProductoPage() {
   const supabase = createClient();
@@ -36,15 +37,17 @@ export default function NuevoProductoPage() {
     fetchData();
   }, [supabase]);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const filesArray = Array.from(e.target.files);
-      const newImages = filesArray.map((file, index) => {
+      const newImages: { id: string; url: string; isPrimary: boolean; file: File }[] = [];
+      
+      for (const file of filesArray) {
+        const compressedFile = await compressImage(file);
         const id = Math.random().toString(36).substring(7);
-        const url = URL.createObjectURL(file);
-        const isPrimary = images.length === 0 && index === 0;
-        return { id, url, isPrimary, file };
-      });
+        const url = URL.createObjectURL(compressedFile);
+        newImages.push({ id, url, isPrimary: false, file: compressedFile });
+      }
       
       setImages(prev => {
         const hasPrimary = prev.some(img => img.isPrimary);

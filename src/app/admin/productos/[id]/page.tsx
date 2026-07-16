@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, Loader2, Image as ImageIcon, X } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { mockProducts } from '@/lib/data';
+import { compressImage } from '@/lib/imageCompressor';
 
 interface ProductImage {
   id: string;
@@ -135,14 +136,17 @@ export default function EditarProductoPage({ params }: { params: Promise<{ id: s
     fetchData();
   }, [resolvedParams.id, supabase, router]);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const filesArray = Array.from(e.target.files);
-      const newImages = filesArray.map((file, index) => {
+      const newImages: ProductImage[] = [];
+      
+      for (const file of filesArray) {
+        const compressedFile = await compressImage(file);
         const id = Math.random().toString(36).substring(7);
-        const url = URL.createObjectURL(file);
-        return { id, url, isPrimary: false, file };
-      });
+        const url = URL.createObjectURL(compressedFile);
+        newImages.push({ id, url, isPrimary: false, file: compressedFile });
+      }
       
       setImages(prev => {
         const hasPrimary = prev.some(img => img.isPrimary);
