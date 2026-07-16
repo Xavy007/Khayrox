@@ -20,29 +20,29 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
 
         {/* Content */}
-        <div className="p-5 flex flex-col gap-2">
-          <div className="flex gap-2 flex-wrap">
+        <div className="p-3 sm:p-5 flex flex-col gap-1.5 sm:gap-2">
+          <div className="flex gap-1.5 flex-wrap">
             {product.techniques.map(tech => (
-              <span key={tech} className="text-[10px] font-bold uppercase tracking-wider text-primary border border-primary/20 bg-primary/5 px-2 py-1 rounded">
+              <span key={tech} className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-primary border border-primary/20 bg-primary/5 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded">
                 {tech}
               </span>
             ))}
           </div>
           
-          <h3 className="font-orbitron text-lg font-bold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
+          <h3 className="font-orbitron text-sm sm:text-lg font-bold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
             {product.title}
           </h3>
           
-          <p className="text-sm text-muted line-clamp-2 min-h-[40px]">
+          <p className="text-xs sm:text-sm text-muted line-clamp-2 min-h-[32px] sm:min-h-[40px]">
             {product.description_short}
           </p>
           
-          <div className="mt-2 flex items-center justify-between">
-            <span className="text-xl font-bold text-foreground">
-              <span className="text-sm font-normal text-muted mr-1">desde</span>
+          <div className="mt-2 flex flex-col gap-1.5 sm:flex-row sm:items-center justify-between sm:gap-0">
+            <span className="text-sm sm:text-xl font-bold text-foreground">
+              <span className="text-[10px] sm:text-sm font-normal text-muted mr-1">desde</span>
               Bs. {product.base_price}
             </span>
-            <span className="text-primary text-sm font-medium hover:underline">
+            <span className="text-primary text-xs sm:text-sm font-medium hover:underline">
               Ver detalles &rarr;
             </span>
           </div>

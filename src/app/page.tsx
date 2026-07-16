@@ -2,9 +2,32 @@
 
 import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, useScroll, useTransform, useSpring, useMotionValue, useMotionTemplate, Variants } from "framer-motion";
+import { createClient } from "@/lib/supabase/client";
 
 export default function Home() {
+  const supabase = createClient();
+  const [heroBannerUrl, setHeroBannerUrl] = useState('/hero-showcase-skinny.png');
+
+  useEffect(() => {
+    const fetchBanner = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('site_config')
+          .select('value')
+          .eq('key', 'hero_banner_url')
+          .single();
+        if (data?.value) {
+          setHeroBannerUrl(data.value);
+        }
+      } catch (err) {
+        console.error('Error fetching banner configuration:', err);
+      }
+    };
+    fetchBanner();
+  }, [supabase]);
+
   const containerRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -77,7 +100,7 @@ export default function Home() {
     <main className="flex-1 flex flex-col bg-[#050914] overflow-hidden" ref={containerRef}>
 
       {/* HERO PARALLAX & SPOTLIGHT SECTION */}
-      <section className="relative w-full h-[100vh] min-h-[800px] flex items-center justify-center overflow-hidden">
+      <section className="relative w-full h-[100vh] min-h-[850px] flex items-center justify-center overflow-hidden">
 
         {/* Mouse Spotlight */}
         <motion.div
@@ -116,66 +139,97 @@ export default function Home() {
 
         {/* Hero Content */}
         <motion.div
-          className="container px-4 md:px-6 relative z-10 mx-auto max-w-6xl text-center flex flex-col items-center"
+          className="container px-4 md:px-6 relative z-10 mx-auto max-w-7xl flex flex-col lg:flex-row items-center gap-12 lg:gap-8 justify-between text-left"
           style={{ y: textY }}
         >
+          {/* Left Column (Text and Actions) */}
+          <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left max-w-2xl">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8, y: -20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 1, type: "spring", bounce: 0.5 }}
+              className="group relative inline-flex items-center rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-xs sm:text-sm text-primary mb-6 backdrop-blur-xl overflow-hidden cursor-pointer"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/20 to-transparent -translate-x-[200%] group-hover:animate-[shimmer_2s_infinite]" />
+              <span className="flex h-2.5 w-2.5 rounded-full bg-primary animate-pulse mr-3 shadow-[0_0_10px_rgba(0,212,255,1)]"></span>
+              <span className="font-medium tracking-wide">Descubre la Nueva Colección 2026</span>
+            </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0, filter: "blur(20px)" }}
+              animate={{ opacity: 1, filter: "blur(0px)" }}
+              transition={{ duration: 1.2, delay: 0.1, ease: "easeOut" }}
+              className="text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tighter text-white font-orbitron mb-6 leading-tight"
+            >
+              KHAYROX
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+              className="text-slate-300 text-base sm:text-lg lg:text-xl font-light mb-10 leading-relaxed max-w-xl"
+            >
+              Somos una empresa de <strong className="text-white">Soluciones de Personalización Digital Creativa</strong> que incluye servicios de <strong className="text-primary font-bold">sublimación</strong>, <strong className="text-primary font-bold">estampado</strong>, <strong className="text-primary font-bold">serigrafía</strong> , <strong className="text-primary font-bold">corte y grabado láser</strong>, diseñados para crear todo tipo de detalles únicos y especiales.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.7 }}
+              className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto"
+            >
+              <Link
+                href="/catalogo"
+                className="group relative inline-flex h-14 sm:h-16 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-r from-primary to-blue-500 px-8 sm:px-10 font-bold text-[#050914] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_45px_rgba(0,212,255,0.7)]"
+              >
+                <div className="absolute inset-0 flex h-full w-full justify-center [transform:skew(-12deg)_translateX(-150%)] group-hover:duration-1000 group-hover:[transform:skew(-12deg)_translateX(150%)]">
+                  <div className="relative h-full w-12 bg-white/40 blur-sm" />
+                </div>
+                <span className="relative text-base sm:text-lg tracking-widest uppercase">Ver Catálogo</span>
+              </Link>
+
+              <Link
+                href="/cotizador"
+                className="group relative inline-flex h-14 sm:h-16 items-center justify-center rounded-2xl border border-white/20 bg-white/5 backdrop-blur-xl px-8 sm:px-10 font-bold text-white transition-all duration-300 hover:bg-white/10 hover:border-primary/50 hover:scale-105 hover:shadow-[0_0_25px_rgba(255,255,255,0.1)]"
+              >
+                <span className="relative text-base sm:text-lg tracking-widest uppercase flex items-center gap-2 group-hover:text-primary transition-colors">
+                  Cotizar Proyecto
+                  <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </span>
+              </Link>
+            </motion.div>
+          </div>
+
+          {/* Right Column (Visual Showcase Image with Cyberpunk Frames) */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8, y: -20 }}
+            initial={{ opacity: 0, scale: 0.9, y: 30 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 1, type: "spring", bounce: 0.5 }}
-            className="group relative inline-flex items-center rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-sm text-primary mb-10 backdrop-blur-xl overflow-hidden cursor-pointer"
+            transition={{ duration: 1, delay: 0.4, type: "spring" }}
+            className="flex-1 w-full max-w-lg lg:max-w-none relative aspect-[4/3] sm:aspect-video lg:aspect-[4/3] rounded-3xl overflow-hidden border border-primary/30 shadow-[0_0_50px_rgba(0,212,255,0.2)] bg-surface"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/20 to-transparent -translate-x-[200%] group-hover:animate-[shimmer_2s_infinite]" />
-            <span className="flex h-2.5 w-2.5 rounded-full bg-primary animate-pulse mr-3 shadow-[0_0_10px_rgba(0,212,255,1)]"></span>
-            <span className="font-medium tracking-wide">Descubre la Nueva Colección 2026</span>
-          </motion.div>
+            {/* Ambient glows behind the image */}
+            <div className="absolute top-0 right-0 w-48 h-48 bg-primary/20 rounded-full blur-[60px]" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-secondary/20 rounded-full blur-[60px]" />
 
-          <motion.h1
-            initial={{ opacity: 0, filter: "blur(20px)" }}
-            animate={{ opacity: 1, filter: "blur(0px)" }}
-            transition={{ duration: 1.2, delay: 0.1, ease: "easeOut" }}
-            className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter text-white font-orbitron mb-6 leading-tight"
-          >
-            KHAYROX <br />
+            {/* Showcase Image */}
+            <Image
+              src={heroBannerUrl}
+              alt="KHAYROX Premium Custom Products Showcase"
+              fill
+              priority
+              className="object-cover transition-transform duration-700 hover:scale-105"
+              sizes="(max-width: 1024px) 100vw, 50vw"
+            />
 
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="max-w-[800px] text-slate-300 md:text-xl lg:text-2xl font-light mb-12 leading-relaxed"
-          >
-            En <strong className="text-white font-orbitron">KHAYROX</strong> transformamos tus ideas en piezas únicas que se sienten tanto como se ven.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.7 }}
-            className="flex flex-col sm:flex-row gap-6 w-full sm:w-auto"
-          >
-            <Link
-              href="/catalogo"
-              className="group relative inline-flex h-16 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-r from-primary to-blue-500 px-10 font-bold text-[#050914] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_50px_rgba(0,212,255,0.8)]"
-            >
-              <div className="absolute inset-0 flex h-full w-full justify-center [transform:skew(-12deg)_translateX(-150%)] group-hover:duration-1000 group-hover:[transform:skew(-12deg)_translateX(150%)]">
-                <div className="relative h-full w-12 bg-white/40 blur-sm" />
-              </div>
-              <span className="relative text-lg tracking-widest uppercase">Ver Catálogo</span>
-            </Link>
-
-            <Link
-              href="/cotizador"
-              className="group relative inline-flex h-16 items-center justify-center rounded-2xl border border-white/20 bg-white/5 backdrop-blur-xl px-10 font-bold text-white transition-all duration-300 hover:bg-white/10 hover:border-primary/50 hover:scale-105 hover:shadow-[0_0_30px_rgba(255,255,255,0.1)]"
-            >
-              <span className="relative text-lg tracking-widest uppercase flex items-center gap-2 group-hover:text-primary transition-colors">
-                Cotizar Proyecto
-                <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </span>
-            </Link>
+            {/* Tech border framing overlay */}
+            <div className="absolute inset-0 border border-primary/20 pointer-events-none rounded-3xl m-2" />
+            <div className="absolute top-4 left-4 flex gap-1.5 items-center bg-[#050914]/85 border border-primary/30 px-3 py-1 rounded-full text-[10px] font-mono text-primary font-bold uppercase tracking-wider backdrop-blur-md">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+              Live Showcase
+            </div>
           </motion.div>
         </motion.div>
       </section>

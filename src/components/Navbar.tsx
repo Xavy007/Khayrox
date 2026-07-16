@@ -1,11 +1,13 @@
 "use client";
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { ShoppingCart, Menu, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useCartStore } from '@/store/cartStore';
 
 export default function Navbar() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const getTotalItems = useCartStore(state => state.getTotalItems);
   const [mounted, setMounted] = useState(false);
@@ -13,6 +15,11 @@ export default function Navbar() {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Do not render client navbar on admin or login pages
+  if (pathname && (pathname.startsWith('/admin') || pathname.startsWith('/login'))) {
+    return null;
+  }
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-primary/20 bg-background/80 backdrop-blur-md">
