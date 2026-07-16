@@ -1,0 +1,78 @@
+"use client";
+
+import Link from 'next/link';
+import { ShoppingCart, Menu, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useCartStore } from '@/store/cartStore';
+
+export default function Navbar() {
+  const [isOpen, setIsOpen] = useState(false);
+  const getTotalItems = useCartStore(state => state.getTotalItems);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  return (
+    <nav className="sticky top-0 z-50 w-full border-b border-primary/20 bg-background/80 backdrop-blur-md">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
+        <div className="flex items-center gap-6">
+          <Link href="/" className="flex items-center gap-2">
+            <span className="font-orbitron text-2xl font-bold text-primary drop-shadow-[0_0_10px_rgba(0,212,255,0.8)] tracking-wider">
+              KHAYROX
+            </span>
+          </Link>
+          
+          <div className="hidden md:flex gap-6 text-sm font-medium">
+            <Link href="/catalogo" className="text-foreground/80 hover:text-primary transition-colors">
+              Catálogo
+            </Link>
+            <Link href="/catalogo?technique=laser" className="text-foreground/80 hover:text-primary transition-colors">
+              Corte Láser
+            </Link>
+            <Link href="/catalogo?technique=sublimacion" className="text-foreground/80 hover:text-primary transition-colors">
+              Sublimación
+            </Link>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <Link href="/cotizador" className="relative p-2 text-foreground/80 hover:text-primary transition-colors">
+            <ShoppingCart className="h-5 w-5" />
+            {mounted && getTotalItems() > 0 && (
+              <span className="absolute top-0 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-[#050914]">
+                {getTotalItems()}
+              </span>
+            )}
+          </Link>
+          
+          <button 
+            className="md:hidden p-2 text-foreground"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      {isOpen && (
+        <div className="md:hidden border-t border-primary/20 bg-surface/95 backdrop-blur px-4 py-4 space-y-4">
+          <Link href="/catalogo" className="block text-foreground hover:text-primary font-medium" onClick={() => setIsOpen(false)}>
+            Catálogo Completo
+          </Link>
+          <Link href="/catalogo?technique=laser" className="block text-foreground hover:text-primary font-medium" onClick={() => setIsOpen(false)}>
+            Corte Láser
+          </Link>
+          <Link href="/catalogo?technique=sublimacion" className="block text-foreground hover:text-primary font-medium" onClick={() => setIsOpen(false)}>
+            Sublimación
+          </Link>
+          <Link href="/catalogo?technique=serigrafia" className="block text-foreground hover:text-primary font-medium" onClick={() => setIsOpen(false)}>
+            Serigrafía
+          </Link>
+        </div>
+      )}
+    </nav>
+  );
+}
