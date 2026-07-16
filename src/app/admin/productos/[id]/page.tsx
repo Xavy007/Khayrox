@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Loader2, Image as ImageIcon } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { mockProducts } from '@/lib/data';
 
 export default function EditarProductoPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
@@ -15,6 +16,7 @@ export default function EditarProductoPage({ params }: { params: Promise<{ id: s
   const [techniques, setTechniques] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isMockProduct, setIsMockProduct] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   
@@ -32,6 +34,10 @@ export default function EditarProductoPage({ params }: { params: Promise<{ id: s
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
+      
+      const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+      const isUuid = uuidRegex.test(resolvedParams.id);
+      
       try {
         // Fetch categories & techniques
         const [catsRes, techsRes] = await Promise.all([
@@ -41,37 +47,63 @@ export default function EditarProductoPage({ params }: { params: Promise<{ id: s
         if (catsRes.data) setCategories(catsRes.data);
         if (techsRes.data) setTechniques(techsRes.data);
 
-        // Fetch product details
-        const { data: productData, error: productError } = await supabase
-          .from('products')
-          .select(`
-            *,
-            product_images ( url, is_primary ),
-            product_categories ( category_id ),
-            product_techniques ( technique_id ),
-            product_tags ( tag )
-          `)
-          .eq('id', resolvedParams.id)
-          .single();
+        if (!isUuid) {
+          // If it is not a valid UUID (like 'p1'), load local mock product details
+          const mock = mockProducts.find(p => p.id === resolvedParams.id);
+          if (mock) {
+            setIsMockProduct(true);
+            setFormData({
+              title: mock.title,
+              description_short: mock.description_short,
+              description_long: mock.description_long,
+              base_price: String(mock.base_price),
+              tags: mock.tags?.join(', ') || '',
+              selectedCategories: [], // keep empty as mock ids do not match DB uuids
+              selectedTechniques: [],
+              is_available: mock.is_available !== false
+            });
+            const primaryImg = mock.images?.find((img: any) => img.is_primary)?.url || mock.images?.[0]?.url;
+            if (primaryImg) {
+              setImagePreview(primaryImg);
+            }
+          } else {
+            alert('Producto de prueba no encontrado.');
+            router.push('/admin/productos');
+          }
+        } else {
+          // If it is a valid UUID, query database
+          setIsMockProduct(false);
+          const { data: productData, error: productError } = await supabase
+            .from('products')
+            .select(`
+              *,
+              product_images ( url, is_primary ),
+              product_categories ( category_id ),
+              product_techniques ( technique_id ),
+              product_tags ( tag )
+            `)
+            .eq('id', resolvedParams.id)
+            .single();
 
-        if (productError) throw productError;
+          if (productError) throw productError;
 
-        if (productData) {
-          const p = productData as any;
-          setFormData({
-            title: p.title || '',
-            description_short: p.description_short || '',
-            description_long: p.description_long || '',
-            base_price: p.base_price ? String(p.base_price) : '',
-            tags: p.product_tags?.map((t: any) => t.tag).join(', ') || '',
-            selectedCategories: p.product_categories?.map((c: any) => c.category_id) || [],
-            selectedTechniques: p.product_techniques?.map((t: any) => t.technique_id) || [],
-            is_available: p.is_available !== false
-          });
+          if (productData) {
+            const p = productData as any;
+            setFormData({
+              title: p.title || '',
+              description_short: p.description_short || '',
+              description_long: p.description_long || '',
+              base_price: p.base_price ? String(p.base_price) : '',
+              tags: p.product_tags?.map((t: any) => t.tag).join(', ') || '',
+              selectedCategories: p.product_categories?.map((c: any) => c.category_id) || [],
+              selectedTechniques: p.product_techniques?.map((t: any) => t.technique_id) || [],
+              is_available: p.is_available !== false
+            });
 
-          const primaryImg = p.product_images?.find((img: any) => img.is_primary)?.url || p.product_images?.[0]?.url;
-          if (primaryImg) {
-            setImagePreview(primaryImg);
+            const primaryImg = p.product_images?.find((img: any) => img.is_primary)?.url || p.product_images?.[0]?.url;
+            if (primaryImg) {
+              setImagePreview(primaryImg);
+            }
           }
         }
       } catch (err: any) {
@@ -121,25 +153,49 @@ export default function EditarProductoPage({ params }: { params: Promise<{ id: s
     const slug = formData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
     
     try {
-      // 1. Update Product
-      const { error: productError } = await supabase
-        .from('products')
-        .update({ 
-          title: formData.title,
-          slug,
-          description_short: formData.description_short,
-          description_long: formData.description_long,
-          base_price: Number(formData.base_price) || 0,
-          is_available: formData.is_available
-        })
-        .eq('id', resolvedParams.id);
+      let productId = resolvedParams.id;
 
-      if (productError) throw productError;
+      if (isMockProduct) {
+        // If it was a mock product, create a NEW entry in products with a real UUID
+        const { data: newProd, error: insertError } = await supabase
+          .from('products')
+          .insert([
+            {
+              title: formData.title,
+              slug,
+              description_short: formData.description_short,
+              description_long: formData.description_long,
+              base_price: Number(formData.base_price) || 0,
+              is_published: true,
+              is_available: formData.is_available
+            }
+          ])
+          .select()
+          .single();
+
+        if (insertError) throw insertError;
+        productId = newProd.id;
+      } else {
+        // Regular update in database
+        const { error: productError } = await supabase
+          .from('products')
+          .update({ 
+            title: formData.title,
+            slug,
+            description_short: formData.description_short,
+            description_long: formData.description_long,
+            base_price: Number(formData.base_price) || 0,
+            is_available: formData.is_available
+          })
+          .eq('id', productId);
+
+        if (productError) throw productError;
+      }
 
       // 2. Upload Image if exists
       if (imageFile) {
         const fileExt = imageFile.name.split('.').pop();
-        const fileName = `${resolvedParams.id}-${Math.random()}.${fileExt}`;
+        const fileName = `${productId}-${Math.random()}.${fileExt}`;
         
         const { error: uploadError } = await supabase.storage
           .from('product-images')
@@ -147,52 +203,54 @@ export default function EditarProductoPage({ params }: { params: Promise<{ id: s
           
         if (uploadError) {
           console.error("Error al subir imagen:", uploadError);
-          alert("El producto se actualizó, pero hubo un error al subir la imagen. Verifica los permisos de Storage.");
+          alert("El producto se guardó, pero hubo un error al subir la nueva imagen.");
         } else {
-          // Get public URL
           const { data: { publicUrl } } = supabase.storage.from('product-images').getPublicUrl(fileName);
-          
-          // Delete old image relations
-          await supabase.from('product_images').delete().eq('product_id', resolvedParams.id);
-          
-          // Insert new image relation
+          await supabase.from('product_images').delete().eq('product_id', productId);
           await supabase.from('product_images').insert([{
-            product_id: resolvedParams.id,
+            product_id: productId,
             url: publicUrl,
             is_primary: true
           }]);
         }
+      } else if (isMockProduct && imagePreview) {
+        // If saving mock product, register the mock image URL in product_images
+        await supabase.from('product_images').insert([{
+          product_id: productId,
+          url: imagePreview,
+          is_primary: true
+        }]);
       }
 
-      // 3. Sync Categories: Delete existing and insert new
-      await supabase.from('product_categories').delete().eq('product_id', resolvedParams.id);
+      // 3. Sync Categories
+      await supabase.from('product_categories').delete().eq('product_id', productId);
       if (formData.selectedCategories.length > 0) {
         await supabase.from('product_categories').insert(
-          formData.selectedCategories.map(catId => ({ product_id: resolvedParams.id, category_id: catId }))
+          formData.selectedCategories.map(catId => ({ product_id: productId, category_id: catId }))
         );
       }
 
-      // 4. Sync Techniques: Delete existing and insert new
-      await supabase.from('product_techniques').delete().eq('product_id', resolvedParams.id);
+      // 4. Sync Techniques
+      await supabase.from('product_techniques').delete().eq('product_id', productId);
       if (formData.selectedTechniques.length > 0) {
         await supabase.from('product_techniques').insert(
-          formData.selectedTechniques.map(techId => ({ product_id: resolvedParams.id, technique_id: techId }))
+          formData.selectedTechniques.map(techId => ({ product_id: productId, technique_id: techId }))
         );
       }
 
-      // 5. Sync Tags: Delete existing and insert new
-      await supabase.from('product_tags').delete().eq('product_id', resolvedParams.id);
+      // 5. Sync Tags
+      await supabase.from('product_tags').delete().eq('product_id', productId);
       const tagList = formData.tags
         .split(',')
         .map(t => t.trim())
         .filter(t => t.length > 0);
       if (tagList.length > 0) {
         await supabase.from('product_tags').insert(
-          tagList.map(tag => ({ product_id: resolvedParams.id, tag }))
+          tagList.map(tag => ({ product_id: productId, tag }))
         );
       }
 
-      alert('¡Producto actualizado exitosamente!');
+      alert(isMockProduct ? '¡Producto simulado creado en la base de datos exitosamente!' : '¡Producto actualizado exitosamente!');
       router.push('/admin/productos');
     } catch (error: any) {
       alert('Error al guardar: ' + error.message);
@@ -216,7 +274,14 @@ export default function EditarProductoPage({ params }: { params: Promise<{ id: s
         <Link href="/admin/productos" className="p-2 bg-surface border border-primary/20 rounded-lg hover:bg-primary/10 transition-colors text-muted hover:text-primary">
           <ArrowLeft className="w-5 h-5" />
         </Link>
-        <h1 className="text-3xl font-orbitron font-bold text-foreground">Editar Producto</h1>
+        <div className="flex flex-col">
+          <h1 className="text-3xl font-orbitron font-bold text-foreground">Editar Producto</h1>
+          {isMockProduct && (
+            <span className="text-xs text-yellow-400 font-orbitron font-bold mt-1 bg-yellow-500/10 border border-yellow-500/20 px-2 py-0.5 rounded self-start">
+              Modo Simulación (Se creará en la base de datos al guardar)
+            </span>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -359,7 +424,7 @@ export default function EditarProductoPage({ params }: { params: Promise<{ id: s
               className="flex items-center gap-2 px-8 h-12 bg-primary text-[#050914] font-bold rounded-lg hover:bg-primary/90 transition-colors shadow-[0_0_15px_rgba(0,212,255,0.4)] disabled:opacity-50"
             >
               {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
-              {isSaving ? 'Guardando...' : 'Actualizar Producto'}
+              {isSaving ? 'Guardando...' : isMockProduct ? 'Crear en Base de Datos' : 'Actualizar Producto'}
             </button>
           </div>
         </div>
