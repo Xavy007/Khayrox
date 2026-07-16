@@ -45,38 +45,18 @@ export default function Navbar() {
               KHAYROX
             </span>
           </Link>
-          
+
           <div className="hidden md:flex gap-4 text-sm font-medium">
-            <Link 
-              href="/catalogo" 
-              className={`px-3 py-1 rounded-md border font-orbitron text-xs font-bold uppercase tracking-wider transition-all duration-300 ${
-                isCatalogActive 
-                  ? 'text-primary bg-primary/10 border-primary/30 shadow-[0_0_15px_rgba(0,212,255,0.2)]' 
-                  : 'text-foreground/80 border-transparent hover:text-primary hover:bg-primary/5'
-              }`}
+            <Link
+              href="/catalogo"
+              className={`px-3 py-1 rounded-md border font-orbitron text-xs font-bold uppercase tracking-wider transition-all duration-300 ${isCatalogActive
+                ? 'text-primary bg-primary/10 border-primary/30 shadow-[0_0_15px_rgba(0,212,255,0.2)]'
+                : 'text-foreground/80 border-transparent hover:text-primary hover:bg-primary/5'
+                }`}
             >
               Catálogo
             </Link>
-            <Link 
-              href="/catalogo?technique=laser" 
-              className={`px-3 py-1 rounded-md border font-orbitron text-xs font-bold uppercase tracking-wider transition-all duration-300 ${
-                isLaserActive 
-                  ? 'text-primary bg-primary/10 border-primary/30 shadow-[0_0_15px_rgba(0,212,255,0.2)]' 
-                  : 'text-foreground/80 border-transparent hover:text-primary hover:bg-primary/5'
-              }`}
-            >
-              Corte Láser
-            </Link>
-            <Link 
-              href="/catalogo?technique=sublimacion" 
-              className={`px-3 py-1 rounded-md border font-orbitron text-xs font-bold uppercase tracking-wider transition-all duration-300 ${
-                isSublimationActive 
-                  ? 'text-primary bg-primary/10 border-primary/30 shadow-[0_0_15px_rgba(0,212,255,0.2)]' 
-                  : 'text-foreground/80 border-transparent hover:text-primary hover:bg-primary/5'
-              }`}
-            >
-              Sublimación
-            </Link>
+
           </div>
         </div>
 
@@ -89,8 +69,8 @@ export default function Navbar() {
               </span>
             )}
           </Link>
-          
-          <button 
+
+          <button
             className="md:hidden p-2 text-foreground"
             onClick={() => setIsOpen(!isOpen)}
           >
@@ -102,38 +82,15 @@ export default function Navbar() {
       {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden border-t border-primary/20 bg-surface/95 backdrop-blur px-4 py-4 space-y-3">
-          <Link 
-            href="/catalogo" 
-            className={`block font-orbitron text-xs font-bold uppercase tracking-wider py-2 px-3 rounded-lg border transition-all ${
-              isCatalogActive 
-                ? 'text-primary bg-primary/10 border-primary/30' 
-                : 'text-foreground hover:text-primary border-transparent'
-            }`} 
+          <Link
+            href="/catalogo"
+            className={`block font-orbitron text-xs font-bold uppercase tracking-wider py-2 px-3 rounded-lg border transition-all ${isCatalogActive
+              ? 'text-primary bg-primary/10 border-primary/30'
+              : 'text-foreground hover:text-primary border-transparent'
+              }`}
             onClick={() => setIsOpen(false)}
           >
             Catálogo Completo
-          </Link>
-          <Link 
-            href="/catalogo?technique=laser" 
-            className={`block font-orbitron text-xs font-bold uppercase tracking-wider py-2 px-3 rounded-lg border transition-all ${
-              isLaserActive 
-                ? 'text-primary bg-primary/10 border-primary/30' 
-                : 'text-foreground hover:text-primary border-transparent'
-            }`} 
-            onClick={() => setIsOpen(false)}
-          >
-            Corte Láser
-          </Link>
-          <Link 
-            href="/catalogo?technique=sublimacion" 
-            className={`block font-orbitron text-xs font-bold uppercase tracking-wider py-2 px-3 rounded-lg border transition-all ${
-              isSublimationActive 
-                ? 'text-primary bg-primary/10 border-primary/30' 
-                : 'text-foreground hover:text-primary border-transparent'
-            }`} 
-            onClick={() => setIsOpen(false)}
-          >
-            Sublimación
           </Link>
         </div>
       )}
