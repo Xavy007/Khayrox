@@ -18,6 +18,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
   const [notes, setNotes] = useState('');
   const [whatsAppNumber, setWhatsAppNumber] = useState('59100000000');
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
   
   const addItem = useCartStore(state => state.addItem);
 
@@ -98,6 +99,17 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
     fetchProduct();
   }, [resolvedParams.slug, supabase]);
 
+  useEffect(() => {
+    if (product && product.images && product.images.length > 0) {
+      const primaryIdx = product.images.findIndex(img => img.is_primary);
+      if (primaryIdx !== -1) {
+        setActiveImageIndex(primaryIdx);
+      } else {
+        setActiveImageIndex(0);
+      }
+    }
+  }, [product]);
+
   const handleAddToCart = () => {
     if (!product) return;
     
@@ -141,7 +153,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
         <div className="space-y-4">
           <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-primary/20 bg-surface">
             <Image
-              src={product.images.find(img => img.is_primary)?.url || product.images[0]?.url || ''}
+              src={product.images[activeImageIndex]?.url || product.images[0]?.url || ''}
               alt={product.title}
               fill
               className={`object-cover transition-all duration-300 ${!isAvailable ? 'opacity-60 grayscale-[30%]' : ''}`}
@@ -153,6 +165,30 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
               </div>
             )}
           </div>
+
+          {/* Thumbnails */}
+          {product.images && product.images.length > 1 && (
+            <div className="grid grid-cols-5 gap-3">
+              {product.images.map((img, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setActiveImageIndex(idx)}
+                  className={`relative aspect-square w-full overflow-hidden rounded-xl border bg-surface transition-all duration-200 cursor-pointer ${
+                    activeImageIndex === idx 
+                      ? 'border-primary shadow-[0_0_12px_rgba(0,212,255,0.35)] scale-95' 
+                      : 'border-primary/10 opacity-70 hover:opacity-100 hover:border-primary/30'
+                  }`}
+                >
+                  <Image
+                    src={img.url}
+                    alt={`${product.title} vista ${idx + 1}`}
+                    fill
+                    className="object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Product Details */}

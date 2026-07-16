@@ -3,9 +3,17 @@
 import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Loader2, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, Loader2, Image as ImageIcon, X } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { mockProducts } from '@/lib/data';
+
+interface ProductImage {
+  id: string;
+  url: string;
+  isPrimary: boolean;
+  file?: File;
+  isExisting?: boolean;
+}
 
 export default function EditarProductoPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
@@ -17,8 +25,9 @@ export default function EditarProductoPage({ params }: { params: Promise<{ id: s
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isMockProduct, setIsMockProduct] = useState(false);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  
+  const [images, setImages] = useState<ProductImage[]>([]);
+  const [deletedImageIds, setDeletedImageIds] = useState<string[]>([]);
   
   const [formData, setFormData] = useState({
     title: '',
@@ -62,10 +71,15 @@ export default function EditarProductoPage({ params }: { params: Promise<{ id: s
               selectedTechniques: [],
               is_available: mock.is_available !== false
             });
-            const primaryImg = mock.images?.find((img: any) => img.is_primary)?.url || mock.images?.[0]?.url;
-            if (primaryImg) {
-              setImagePreview(primaryImg);
-            }
+            
+            // Map mock images to the preview state
+            const mockImgs = (mock.images || []).map((img: any, idx: number) => ({
+              id: `mock-${idx}`,
+              url: img.url,
+              isPrimary: img.is_primary === true,
+              isExisting: true
+            }));
+            setImages(mockImgs);
           } else {
             alert('Producto de prueba no encontrado.');
             router.push('/admin/productos');
@@ -77,7 +91,7 @@ export default function EditarProductoPage({ params }: { params: Promise<{ id: s
             .from('products')
             .select(`
               *,
-              product_images ( url, is_primary ),
+              product_images ( id, url, is_primary ),
               product_categories ( category_id ),
               product_techniques ( technique_id ),
               product_tags ( tag )
@@ -100,10 +114,14 @@ export default function EditarProductoPage({ params }: { params: Promise<{ id: s
               is_available: p.is_available !== false
             });
 
-            const primaryImg = p.product_images?.find((img: any) => img.is_primary)?.url || p.product_images?.[0]?.url;
-            if (primaryImg) {
-              setImagePreview(primaryImg);
-            }
+            // Map product_images from DB to our state
+            const dbImages = (p.product_images || []).map((img: any) => ({
+              id: img.id,
+              url: img.url,
+              isPrimary: img.is_primary === true,
+              isExisting: true
+            }));
+            setImages(dbImages);
           }
         }
       } catch (err: any) {
@@ -118,11 +136,46 @@ export default function EditarProductoPage({ params }: { params: Promise<{ id: s
   }, [resolvedParams.id, supabase, router]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
+    if (e.target.files) {
+      const filesArray = Array.from(e.target.files);
+      const newImages = filesArray.map((file, index) => {
+        const id = Math.random().toString(36).substring(7);
+        const url = URL.createObjectURL(file);
+        return { id, url, isPrimary: false, file };
+      });
+      
+      setImages(prev => {
+        const hasPrimary = prev.some(img => img.isPrimary);
+        const adjustedNewImages = newImages.map((img, idx) => ({
+          ...img,
+          isPrimary: !hasPrimary && idx === 0
+        }));
+        return [...prev, ...adjustedNewImages];
+      });
     }
+  };
+
+  const handleSetPrimary = (id: string) => {
+    setImages(prev => prev.map(img => ({
+      ...img,
+      isPrimary: img.id === id
+    })));
+  };
+
+  const handleRemoveImage = (id: string) => {
+    setImages(prev => {
+      const target = prev.find(img => img.id === id);
+      if (target && target.isExisting) {
+        setDeletedImageIds(d => [...d, id]);
+      }
+      
+      const filtered = prev.filter(img => img.id !== id);
+      const hasPrimary = filtered.some(img => img.isPrimary);
+      if (!hasPrimary && filtered.length > 0) {
+        filtered[0].isPrimary = true;
+      }
+      return filtered;
+    });
   };
 
   const handleCategoryToggle = (id: string) => {
@@ -192,34 +245,60 @@ export default function EditarProductoPage({ params }: { params: Promise<{ id: s
         if (productError) throw productError;
       }
 
-      // 2. Upload Image if exists
-      if (imageFile) {
-        const fileExt = imageFile.name.split('.').pop();
-        const fileName = `${productId}-${Math.random()}.${fileExt}`;
-        
-        const { error: uploadError } = await supabase.storage
-          .from('product-images')
-          .upload(fileName, imageFile);
+      // 2. Manage Images
+      // A. Delete existing images marked for deletion
+      if (deletedImageIds.length > 0 && !isMockProduct) {
+        await supabase
+          .from('product_images')
+          .delete()
+          .in('id', deletedImageIds);
+      }
+
+      // B. Sincronize primary flag for existing images
+      const existingImages = images.filter(img => img.isExisting);
+      for (const img of existingImages) {
+        if (!isMockProduct) {
+          await supabase
+            .from('product_images')
+            .update({ is_primary: img.isPrimary })
+            .eq('id', img.id);
+        }
+      }
+
+      // C. Upload and save new images
+      const newImages = images.filter(img => img.file);
+      for (const img of newImages) {
+        if (img.file) {
+          const fileExt = img.file.name.split('.').pop();
+          const fileName = `${productId}-${Math.random()}.${fileExt}`;
           
-        if (uploadError) {
-          console.error("Error al subir imagen:", uploadError);
-          alert("El producto se guardó, pero hubo un error al subir la nueva imagen.");
-        } else {
-          const { data: { publicUrl } } = supabase.storage.from('product-images').getPublicUrl(fileName);
-          await supabase.from('product_images').delete().eq('product_id', productId);
+          const { error: uploadError } = await supabase.storage
+            .from('product-images')
+            .upload(fileName, img.file);
+            
+          if (uploadError) {
+            console.error("Error al subir imagen:", uploadError);
+          } else {
+            const { data: { publicUrl } } = supabase.storage.from('product-images').getPublicUrl(fileName);
+            await supabase.from('product_images').insert([{
+              product_id: productId,
+              url: publicUrl,
+              is_primary: img.isPrimary
+            }]);
+          }
+        }
+      }
+
+      // D. Sincronize mock images to DB if creating a mock product
+      if (isMockProduct) {
+        const remainingExisting = images.filter(img => img.isExisting);
+        for (const img of remainingExisting) {
           await supabase.from('product_images').insert([{
             product_id: productId,
-            url: publicUrl,
-            is_primary: true
+            url: img.url,
+            is_primary: img.isPrimary
           }]);
         }
-      } else if (isMockProduct && imagePreview) {
-        // If saving mock product, register the mock image URL in product_images
-        await supabase.from('product_images').insert([{
-          product_id: productId,
-          url: imagePreview,
-          is_primary: true
-        }]);
       }
 
       // 3. Sync Categories
@@ -250,7 +329,7 @@ export default function EditarProductoPage({ params }: { params: Promise<{ id: s
         );
       }
 
-      alert(isMockProduct ? '¡Producto simulado creado en la base de datos exitosamente!' : '¡Producto actualizado exitosamente!');
+      alert('¡Producto actualizado exitosamente con sus imágenes!');
       router.push('/admin/productos');
     } catch (error: any) {
       alert('Error al guardar: ' + error.message);
@@ -261,9 +340,8 @@ export default function EditarProductoPage({ params }: { params: Promise<{ id: s
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
-        <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
-        <p className="text-muted text-sm font-orbitron">Cargando producto para edición...</p>
+      <div className="flex h-64 items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -288,31 +366,62 @@ export default function EditarProductoPage({ params }: { params: Promise<{ id: s
         
         {/* Imagen del Producto */}
         <div className="md:col-span-1 space-y-4">
-          <label className="block text-sm font-bold text-foreground">Imagen Principal</label>
+          <label className="block text-sm font-bold text-foreground">Imágenes del Producto</label>
+          
+          {/* Main Upload Box */}
           <div 
-            className="w-full aspect-square bg-background border-2 border-dashed border-primary/30 rounded-xl flex flex-col items-center justify-center gap-2 overflow-hidden relative group"
+            className="w-full aspect-video bg-background border-2 border-dashed border-primary/30 rounded-xl flex flex-col items-center justify-center gap-2 overflow-hidden relative hover:border-primary/60 transition-colors group cursor-pointer"
           >
-            {imagePreview ? (
-              <>
-                <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span className="text-white text-sm font-bold bg-primary/80 px-4 py-2 rounded-lg cursor-pointer">Cambiar Imagen</span>
-                </div>
-              </>
-            ) : (
-              <>
-                <ImageIcon className="w-12 h-12 text-primary/30" />
-                <span className="text-sm text-muted">Clic para subir imagen</span>
-              </>
-            )}
+            <ImageIcon className="w-8 h-8 text-primary/30" />
+            <span className="text-xs text-muted font-orbitron font-bold">Agregar fotos</span>
             <input 
               type="file" 
               accept="image/*" 
+              multiple
               onChange={handleImageChange}
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
             />
           </div>
-          <p className="text-xs text-muted text-center">Se recomienda formato cuadrado (1:1) mínimo 800x800px.</p>
+          
+          {/* Previews List */}
+          <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1">
+            {images.map((img) => (
+              <div 
+                key={img.id} 
+                className={`relative flex items-center gap-3 p-2 bg-surface border rounded-lg transition-all ${
+                  img.isPrimary ? 'border-primary/50 shadow-[0_0_10px_rgba(0,212,255,0.15)]' : 'border-primary/10'
+                }`}
+              >
+                <img src={img.url} alt="Preview" className="w-16 h-16 object-cover rounded" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] text-muted truncate">{img.file ? img.file.name : 'Imagen Guardada'}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <button
+                      onClick={() => handleSetPrimary(img.id)}
+                      className={`text-[9px] font-orbitron font-bold px-2 py-0.5 rounded transition-all cursor-pointer ${
+                        img.isPrimary 
+                          ? 'bg-primary text-[#050914] border border-primary/30' 
+                          : 'bg-primary/5 text-primary border border-primary/20 hover:bg-primary/20'
+                      }`}
+                    >
+                      {img.isPrimary ? '★ Principal' : 'Hacer Principal'}
+                    </button>
+                  </div>
+                </div>
+                <button
+                  onClick={() => handleRemoveImage(img.id)}
+                  className="p-1.5 text-red-400 hover:bg-red-400/10 rounded transition-colors cursor-pointer"
+                  title="Eliminar foto"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+            {images.length === 0 && (
+              <p className="text-xs text-muted text-center py-4">No hay fotos seleccionadas.</p>
+            )}
+          </div>
+          <p className="text-[10px] text-muted text-center">Se recomienda formato cuadrado (1:1) e imágenes optimizadas.</p>
         </div>
 
         {/* Datos Principales */}
@@ -424,7 +533,7 @@ export default function EditarProductoPage({ params }: { params: Promise<{ id: s
               className="flex items-center gap-2 px-8 h-12 bg-primary text-[#050914] font-bold rounded-lg hover:bg-primary/90 transition-colors shadow-[0_0_15px_rgba(0,212,255,0.4)] disabled:opacity-50"
             >
               {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
-              {isSaving ? 'Guardando...' : isMockProduct ? 'Crear en Base de Datos' : 'Actualizar Producto'}
+              {isSaving ? 'Guardando...' : 'Guardar Cambios'}
             </button>
           </div>
         </div>

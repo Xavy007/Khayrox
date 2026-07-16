@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Loader2, Upload, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, Loader2, Image as ImageIcon, X } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
 export default function NuevoProductoPage() {
@@ -11,8 +11,7 @@ export default function NuevoProductoPage() {
   const [categories, setCategories] = useState<any[]>([]);
   const [techniques, setTechniques] = useState<any[]>([]);
   const [isSaving, setIsSaving] = useState(false);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [images, setImages] = useState<{ id: string; url: string; isPrimary: boolean; file: File }[]>([]);
   
   const [formData, setFormData] = useState({
     title: '',
@@ -35,14 +34,45 @@ export default function NuevoProductoPage() {
       if (techsRes.data) setTechniques(techsRes.data);
     };
     fetchData();
-  }, []);
+  }, [supabase]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
+    if (e.target.files) {
+      const filesArray = Array.from(e.target.files);
+      const newImages = filesArray.map((file, index) => {
+        const id = Math.random().toString(36).substring(7);
+        const url = URL.createObjectURL(file);
+        const isPrimary = images.length === 0 && index === 0;
+        return { id, url, isPrimary, file };
+      });
+      
+      setImages(prev => {
+        const hasPrimary = prev.some(img => img.isPrimary);
+        const adjustedNewImages = newImages.map((img, idx) => ({
+          ...img,
+          isPrimary: !hasPrimary && idx === 0
+        }));
+        return [...prev, ...adjustedNewImages];
+      });
     }
+  };
+
+  const handleSetPrimary = (id: string) => {
+    setImages(prev => prev.map(img => ({
+      ...img,
+      isPrimary: img.id === id
+    })));
+  };
+
+  const handleRemoveImage = (id: string) => {
+    setImages(prev => {
+      const filtered = prev.filter(img => img.id !== id);
+      const hasPrimary = filtered.some(img => img.isPrimary);
+      if (!hasPrimary && filtered.length > 0) {
+        filtered[0].isPrimary = true;
+      }
+      return filtered;
+    });
   };
 
   const handleCategoryToggle = (id: string) => {
@@ -88,26 +118,27 @@ export default function NuevoProductoPage() {
 
       if (productError) throw productError;
 
-      // 2. Upload Image if exists
-      if (imageFile) {
-        const fileExt = imageFile.name.split('.').pop();
-        const fileName = `${productData.id}-${Math.random()}.${fileExt}`;
-        
-        const { error: uploadError } = await supabase.storage
-          .from('product-images')
-          .upload(fileName, imageFile);
+      // 2. Upload Images
+      if (images.length > 0) {
+        for (const img of images) {
+          const fileExt = img.file.name.split('.').pop();
+          const fileName = `${productData.id}-${Math.random()}.${fileExt}`;
           
-        if (uploadError) {
-          console.error("Error al subir imagen:", uploadError);
-          alert("El producto se guardó, pero hubo un error al subir la imagen. Verifica los permisos de Storage.");
-        } else {
-          // Get public URL and save to product_images
-          const { data: { publicUrl } } = supabase.storage.from('product-images').getPublicUrl(fileName);
-          await supabase.from('product_images').insert([{
-            product_id: productData.id,
-            url: publicUrl,
-            is_primary: true
-          }]);
+          const { error: uploadError } = await supabase.storage
+            .from('product-images')
+            .upload(fileName, img.file);
+            
+          if (uploadError) {
+            console.error("Error al subir imagen:", uploadError);
+          } else {
+            // Get public URL and save to product_images
+            const { data: { publicUrl } } = supabase.storage.from('product-images').getPublicUrl(fileName);
+            await supabase.from('product_images').insert([{
+              product_id: productData.id,
+              url: publicUrl,
+              is_primary: img.isPrimary
+            }]);
+          }
         }
       }
 
@@ -125,10 +156,20 @@ export default function NuevoProductoPage() {
         );
       }
 
-      alert('¡Producto guardado exitosamente!');
+      // 5. Save Tags
+      const tagList = formData.tags
+        .split(',')
+        .map(t => t.trim())
+        .filter(t => t.length > 0);
+      if (tagList.length > 0) {
+        await supabase.from('product_tags').insert(
+          tagList.map(tag => ({ product_id: productData.id, tag }))
+        );
+      }
+
+      alert('¡Producto guardado exitosamente con sus imágenes!');
       setFormData({ title: '', description_short: '', description_long: '', base_price: '', tags: '', selectedCategories: [], selectedTechniques: [], is_available: true });
-      setImageFile(null);
-      setImagePreview(null);
+      setImages([]);
     } catch (error: any) {
       alert('Error al guardar: ' + error.message);
     } finally {
@@ -149,31 +190,62 @@ export default function NuevoProductoPage() {
         
         {/* Imagen del Producto */}
         <div className="md:col-span-1 space-y-4">
-          <label className="block text-sm font-bold text-foreground">Imagen Principal</label>
+          <label className="block text-sm font-bold text-foreground">Imágenes del Producto</label>
+          
+          {/* Main Upload Box */}
           <div 
-            className="w-full aspect-square bg-background border-2 border-dashed border-primary/30 rounded-xl flex flex-col items-center justify-center gap-2 overflow-hidden relative group"
+            className="w-full aspect-video bg-background border-2 border-dashed border-primary/30 rounded-xl flex flex-col items-center justify-center gap-2 overflow-hidden relative hover:border-primary/60 transition-colors group cursor-pointer"
           >
-            {imagePreview ? (
-              <>
-                <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span className="text-white text-sm font-bold bg-primary/80 px-4 py-2 rounded-lg cursor-pointer">Cambiar Imagen</span>
-                </div>
-              </>
-            ) : (
-              <>
-                <ImageIcon className="w-12 h-12 text-primary/30" />
-                <span className="text-sm text-muted">Clic para subir imagen</span>
-              </>
-            )}
+            <ImageIcon className="w-8 h-8 text-primary/30" />
+            <span className="text-xs text-muted font-orbitron font-bold">Agregar fotos</span>
             <input 
               type="file" 
               accept="image/*" 
+              multiple
               onChange={handleImageChange}
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
             />
           </div>
-          <p className="text-xs text-muted text-center">Se recomienda formato cuadrado (1:1) mínimo 800x800px.</p>
+          
+          {/* Previews List */}
+          <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1">
+            {images.map((img) => (
+              <div 
+                key={img.id} 
+                className={`relative flex items-center gap-3 p-2 bg-surface border rounded-lg transition-all ${
+                  img.isPrimary ? 'border-primary/50 shadow-[0_0_10px_rgba(0,212,255,0.15)]' : 'border-primary/10'
+                }`}
+              >
+                <img src={img.url} alt="Preview" className="w-16 h-16 object-cover rounded" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] text-muted truncate">{img.file.name}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <button
+                      onClick={() => handleSetPrimary(img.id)}
+                      className={`text-[9px] font-orbitron font-bold px-2 py-0.5 rounded transition-all cursor-pointer ${
+                        img.isPrimary 
+                          ? 'bg-primary text-[#050914] border border-primary/30' 
+                          : 'bg-primary/5 text-primary border border-primary/20 hover:bg-primary/20'
+                      }`}
+                    >
+                      {img.isPrimary ? '★ Principal' : 'Hacer Principal'}
+                    </button>
+                  </div>
+                </div>
+                <button
+                  onClick={() => handleRemoveImage(img.id)}
+                  className="p-1.5 text-red-400 hover:bg-red-400/10 rounded transition-colors cursor-pointer"
+                  title="Eliminar foto"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+            {images.length === 0 && (
+              <p className="text-xs text-muted text-center py-4">No hay fotos seleccionadas.</p>
+            )}
+          </div>
+          <p className="text-[10px] text-muted text-center">Se recomienda formato cuadrado (1:1) e imágenes optimizadas.</p>
         </div>
 
         {/* Datos Principales */}
