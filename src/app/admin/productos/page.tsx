@@ -140,9 +140,13 @@ export default function AdminProductsPage() {
                     </td>
                     <td className="p-4">
                       <div className="flex justify-end gap-2">
-                        <button className="p-2 text-primary hover:bg-primary/10 rounded transition-colors" title="Editar">
+                        <Link 
+                          href={`/admin/productos/${product.id}`}
+                          className="p-2 text-primary hover:bg-primary/10 rounded transition-colors block" 
+                          title="Editar"
+                        >
                           <Edit className="w-4 h-4" />
-                        </button>
+                        </Link>
                         <button 
                           onClick={() => handleDelete(product.id)}
                           className="p-2 text-red-400 hover:bg-red-400/10 rounded transition-colors" 
