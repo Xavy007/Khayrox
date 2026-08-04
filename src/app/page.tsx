@@ -60,6 +60,7 @@ export default function Home() {
   // Card 3D Tilt Effect State
   const handleTilt = (e: React.MouseEvent<HTMLDivElement>, ref: React.RefObject<HTMLDivElement | null>) => {
     if (!ref.current) return;
+    if (typeof window !== 'undefined' && window.innerWidth < 768) return;
     const rect = ref.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -102,9 +103,9 @@ export default function Home() {
       {/* HERO PARALLAX & SPOTLIGHT SECTION */}
       <section className="relative w-full h-[100vh] min-h-[850px] flex items-center justify-center overflow-hidden">
 
-        {/* Mouse Spotlight */}
+        {/* Mouse Spotlight - Hidden on mobile for performance */}
         <motion.div
-          className="pointer-events-none fixed inset-0 z-0 opacity-50 mix-blend-screen transition-opacity duration-300"
+          className="pointer-events-none fixed inset-0 z-0 opacity-50 mix-blend-screen transition-opacity duration-300 hidden md:block"
           style={{
             background: useMotionTemplate`
               radial-gradient(
@@ -178,7 +179,7 @@ export default function Home() {
               initial={{ opacity: 0, filter: "blur(20px)" }}
               animate={{ opacity: 1, filter: "blur(0px)" }}
               transition={{ duration: 1.2, delay: 0.1, ease: "easeOut" }}
-              className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-widest bg-gradient-to-r from-white via-cyan-300 to-blue-500 bg-clip-text text-transparent font-orbitron mb-6 leading-tight drop-shadow-[0_0_30px_rgba(0,212,255,0.5)]"
+              className="text-4xl sm:text-7xl lg:text-8xl font-black tracking-widest bg-gradient-to-r from-white via-cyan-300 to-blue-500 bg-clip-text text-transparent font-orbitron mb-6 leading-tight drop-shadow-[0_0_30px_rgba(0,212,255,0.5)]"
             >
               KHAYROX
             </motion.h1>
@@ -402,30 +403,30 @@ export default function Home() {
           transition={{ duration: 1, type: "spring", bounce: 0.3 }}
           className="container px-4 md:px-6 mx-auto max-w-5xl relative z-10"
         >
-          <div className="relative overflow-hidden rounded-[3rem] border border-primary/30 bg-surface/40 backdrop-blur-3xl p-16 md:p-24 text-center shadow-[0_0_100px_rgba(0,212,255,0.1)]">
-            {/* Animated internal gradient */}
-            <div className="absolute -inset-[100%] bg-[conic-gradient(from_90deg_at_50%_50%,#00000000_50%,#00d4ff_100%)] opacity-20 animate-[spin_5s_linear_infinite]" />
-            <div className="absolute inset-[2px] bg-surface/90 rounded-[calc(3rem-2px)] backdrop-blur-3xl" />
+          <div className="relative overflow-hidden rounded-3xl md:rounded-[3rem] border border-primary/30 bg-surface/40 backdrop-blur-xl md:backdrop-blur-3xl p-6 sm:p-16 md:p-24 text-center shadow-[0_0_100px_rgba(0,212,255,0.1)]">
+            {/* Animated internal gradient - Disabled on mobile to prevent GPU lag */}
+            <div className="absolute -inset-[100%] bg-[conic-gradient(from_90deg_at_50%_50%,#00000000_50%,#00d4ff_100%)] opacity-20 animate-[spin_5s_linear_infinite] hidden md:block" />
+            <div className="absolute inset-[2px] bg-surface/90 rounded-[calc(1.5rem-2px)] md:rounded-[calc(3rem-2px)] backdrop-blur-xl md:backdrop-blur-3xl" />
 
             <div className="relative z-10 flex flex-col items-center">
-              <h2 className="text-4xl md:text-6xl font-bold tracking-tighter text-white font-orbitron mb-8">
+              <h2 className="text-2xl sm:text-4xl md:text-6xl font-bold tracking-tighter text-white font-orbitron mb-6 md:mb-8">
                 El Futuro de tu <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Marca</span>
               </h2>
-              <p className="text-slate-400 text-xl max-w-2xl mb-12 font-light leading-relaxed">
+              <p className="text-slate-400 text-base sm:text-xl max-w-2xl mb-8 md:mb-12 font-light leading-relaxed">
                 Únete a las empresas que ya están transformando su identidad visual con nuestras soluciones de personalización de alto rendimiento.
               </p>
 
               <Link
                 href="/cotizador"
-                className="group relative inline-flex h-20 items-center justify-center overflow-hidden rounded-full bg-primary px-16 font-bold text-[#050914] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_80px_rgba(0,212,255,0.6)]"
+                className="group relative inline-flex h-14 sm:h-20 items-center justify-center overflow-hidden rounded-full bg-primary px-8 sm:px-16 font-bold text-[#050914] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_80px_rgba(0,212,255,0.6)]"
               >
                 <div className="absolute inset-0 flex h-full w-full justify-center [transform:skew(-12deg)_translateX(-150%)] group-hover:duration-1000 group-hover:[transform:skew(-12deg)_translateX(150%)]">
                   <div className="relative h-full w-20 bg-white/40 blur-sm" />
                 </div>
-                <span className="relative text-2xl tracking-widest uppercase flex items-center gap-4">
+                <span className="relative text-base sm:text-2xl tracking-widest uppercase flex items-center gap-2 sm:gap-4">
                   Empezar Ahora
                   <div className="bg-[#050914] text-primary p-2 rounded-full transition-transform group-hover:translate-x-2">
-                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-4 h-4 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                     </svg>
                   </div>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Save, Upload, Loader2, Image as ImageIcon } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { compressImage } from '@/lib/imageCompressor';
 
 export default function AdminSettingsPage() {
   const supabase = createClient();
@@ -44,11 +45,18 @@ export default function AdminSettingsPage() {
     fetchSettings();
   }, [supabase]);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
+      try {
+        const compressedFile = await compressImage(file);
+        setImageFile(compressedFile);
+        setImagePreview(URL.createObjectURL(compressedFile));
+      } catch (err) {
+        console.error('Error compressing image:', err);
+        setImageFile(file);
+        setImagePreview(URL.createObjectURL(file));
+      }
     }
   };
 
