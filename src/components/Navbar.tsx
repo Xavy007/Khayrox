@@ -35,7 +35,7 @@ export default function Navbar() {
           <Link href="/" className="flex items-center gap-3 group">
             <div className="relative w-8 h-8 rounded-lg overflow-hidden border border-primary/40 shadow-[0_0_15px_rgba(0,212,255,0.4)] transition-transform duration-300 group-hover:scale-110">
               <Image
-                src="/logo-icon.jpg"
+                src="/logo-icon.svg"
                 alt="Logo KHAYROX"
                 fill
                 className="object-cover"

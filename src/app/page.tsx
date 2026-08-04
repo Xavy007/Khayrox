@@ -166,7 +166,7 @@ export default function Home() {
               >
                 <div className="relative w-4 h-4 rounded-md overflow-hidden border border-primary/40">
                   <Image 
-                    src="/logo-icon.jpg" 
+                    src="/logo-icon.svg" 
                     fill
                     alt="KHAYROX Logo Icon" 
                     className="object-cover"
