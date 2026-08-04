@@ -23,7 +23,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="fixed inset-0 z-50 flex md:hidden">
           {/* Backdrop overlay */}
           <div 
-            className="fixed inset-0 bg-[#050914]/80 backdrop-blur-sm transition-opacity duration-300"
+            className="fixed inset-0 bg-background/80 backdrop-blur-sm transition-opacity duration-300"
             onClick={() => setMobileMenuOpen(false)}
           />
           

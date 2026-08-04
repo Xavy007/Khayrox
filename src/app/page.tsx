@@ -98,7 +98,7 @@ export default function Home() {
   };
 
   return (
-    <main className="flex-1 flex flex-col bg-[#050914] overflow-hidden" ref={containerRef}>
+    <main className="flex-1 flex flex-col bg-background overflow-hidden" ref={containerRef}>
 
       {/* HERO PARALLAX & SPOTLIGHT SECTION */}
       <section className="relative w-full h-[100vh] min-h-[850px] flex items-center justify-center overflow-hidden">
@@ -125,8 +125,8 @@ export default function Home() {
           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:60px_60px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_20%,transparent_100%)]" />
         </motion.div>
 
-        {/* Floating Geometric Elements (Abstract products) */}
-        <motion.div style={{ y: float1Y }} className="absolute top-[20%] left-[10%] z-0 hidden lg:block opacity-30">
+        {/* Floating Geometric Elements (Abstract products) - Shifted left to prevent overlap */}
+        <motion.div style={{ y: float1Y }} className="absolute top-[20%] left-[2%] z-0 hidden xl:block opacity-20">
           <div className="w-32 h-32 rounded-3xl bg-gradient-to-tr from-primary/40 to-transparent border border-primary/20 backdrop-blur-md animate-[spin_20s_linear_infinite] shadow-[0_0_50px_rgba(0,212,255,0.2)]" />
         </motion.div>
 
@@ -145,35 +145,38 @@ export default function Home() {
         >
           {/* Left Column (Text and Actions) */}
           <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left max-w-2xl">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8, y: -20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ duration: 1, type: "spring", bounce: 0.5 }}
-              className="group relative inline-flex items-center rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-xs sm:text-sm text-primary mb-6 backdrop-blur-xl overflow-hidden cursor-pointer"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/20 to-transparent -translate-x-[200%] group-hover:animate-[shimmer_2s_infinite]" />
-              <span className="flex h-2.5 w-2.5 rounded-full bg-primary animate-pulse mr-3 shadow-[0_0_10px_rgba(0,212,255,1)]"></span>
-              <span className="font-medium tracking-wide">Descubre la Nueva Colección 2026</span>
-            </motion.div>
+            {/* Contenedor de Badges en Fila */}
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 mb-6">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8, y: -20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 1, type: "spring", bounce: 0.5 }}
+                className="group relative inline-flex items-center rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-xs sm:text-sm text-primary backdrop-blur-xl overflow-hidden cursor-pointer"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/20 to-transparent -translate-x-[200%] group-hover:animate-[shimmer_2s_infinite]" />
+                <span className="flex h-2.5 w-2.5 rounded-full bg-primary animate-pulse mr-3 shadow-[0_0_10px_rgba(0,212,255,1)]"></span>
+                <span className="font-medium tracking-wide">Colección 2026</span>
+              </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-surface/50 border border-primary/30 backdrop-blur-md mb-6 shadow-[0_0_20px_rgba(0,212,255,0.2)] w-fit"
-            >
-              <div className="relative w-5 h-5 rounded-md overflow-hidden border border-primary/40">
-                <Image 
-                  src="/logo-icon.jpg" 
-                  fill
-                  alt="KHAYROX Logo Icon" 
-                  className="object-cover"
-                />
-              </div>
-              <span className="text-[10px] sm:text-xs font-mono font-bold tracking-wider text-primary uppercase">
-                Estudio Creativo
-              </span>
-            </motion.div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1, delay: 0.2 }}
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface/50 border border-primary/30 backdrop-blur-md shadow-[0_0_20px_rgba(0,212,255,0.2)] w-fit"
+              >
+                <div className="relative w-4 h-4 rounded-md overflow-hidden border border-primary/40">
+                  <Image 
+                    src="/logo-icon.jpg" 
+                    fill
+                    alt="KHAYROX Logo Icon" 
+                    className="object-cover"
+                  />
+                </div>
+                <span className="text-[10px] font-mono font-bold tracking-wider text-primary uppercase">
+                  Estudio Creativo
+                </span>
+              </motion.div>
+            </div>
 
             <motion.h1
               initial={{ opacity: 0, filter: "blur(20px)" }}
@@ -190,7 +193,7 @@ export default function Home() {
               transition={{ duration: 0.8, delay: 0.5 }}
               className="text-slate-300 text-base sm:text-lg lg:text-xl font-light mb-10 leading-relaxed max-w-xl"
             >
-              Somos una empresa de <strong className="text-white">Soluciones de Personalización Digital Creativa</strong> que incluye servicios de <strong className="text-primary font-bold">sublimación</strong>, <strong className="text-primary font-bold">estampado</strong>, <strong className="text-primary font-bold">serigrafía</strong> , <strong className="text-primary font-bold">corte y grabado láser</strong>, diseñados para crear todo tipo de detalles únicos y especiales.
+              Somos una empresa de <strong className="text-white">Soluciones de Personalización Digital Creativa</strong> que incluye servicios de <strong className="text-primary font-bold">sublimación</strong>, <strong className="text-primary font-bold">estampado</strong>, <strong className="text-primary font-bold">serigrafía</strong>, <strong className="text-primary font-bold">corte y grabado láser</strong>, diseñados para crear todo tipo de detalles únicos y especiales.
             </motion.p>
 
             <motion.div
@@ -201,7 +204,7 @@ export default function Home() {
             >
               <Link
                 href="/catalogo"
-                className="group relative inline-flex h-14 sm:h-16 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-r from-primary to-blue-500 px-8 sm:px-10 font-bold text-[#050914] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_45px_rgba(0,212,255,0.7)]"
+                className="group relative inline-flex h-14 sm:h-16 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-r from-primary to-blue-500 px-8 sm:px-10 font-bold text-background transition-all duration-300 hover:scale-105 hover:shadow-[0_0_45px_rgba(0,212,255,0.7)]"
               >
                 <div className="absolute inset-0 flex h-full w-full justify-center [transform:skew(-12deg)_translateX(-150%)] group-hover:duration-1000 group-hover:[transform:skew(-12deg)_translateX(150%)]">
                   <div className="relative h-full w-12 bg-white/40 blur-sm" />
@@ -229,6 +232,10 @@ export default function Home() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.4, type: "spring" }}
             className="flex-1 w-full max-w-lg lg:max-w-none relative aspect-[4/3] sm:aspect-video lg:aspect-[4/3] rounded-3xl overflow-hidden border border-primary/30 shadow-[0_0_50px_rgba(0,212,255,0.2)] bg-surface"
+            style={{
+              maskImage: 'linear-gradient(to right, transparent, black 15%)',
+              WebkitMaskImage: 'linear-gradient(to right, transparent, black 15%)'
+            }}
           >
             {/* Ambient glows behind the image */}
             <div className="absolute top-0 right-0 w-48 h-48 bg-primary/20 rounded-full blur-[60px]" />
@@ -246,7 +253,7 @@ export default function Home() {
 
             {/* Tech border framing overlay */}
             <div className="absolute inset-0 border border-primary/20 pointer-events-none rounded-3xl m-2" />
-            <div className="absolute top-4 left-4 flex gap-1.5 items-center bg-[#050914]/85 border border-primary/30 px-3 py-1 rounded-full text-[10px] font-mono text-primary font-bold uppercase tracking-wider backdrop-blur-md">
+            <div className="absolute top-4 left-4 flex gap-1.5 items-center bg-background/85 border border-primary/30 px-3 py-1 rounded-full text-[10px] font-mono text-primary font-bold uppercase tracking-wider backdrop-blur-md">
               <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
               Live Showcase
             </div>
@@ -255,7 +262,7 @@ export default function Home() {
       </section>
 
       {/* PHILOSOPHY SECTION (NEW) */}
-      <section className="relative w-full py-32 md:py-48 z-10 border-t border-white/5 bg-[#030610] overflow-hidden">
+      <section className="relative w-full py-32 md:py-48 z-10 border-t border-white/5 bg-background/50 overflow-hidden">
         {/* Subtle background glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-primary/5 rounded-[100%] blur-[120px] pointer-events-none" />
 
@@ -418,14 +425,14 @@ export default function Home() {
 
               <Link
                 href="/cotizador"
-                className="group relative inline-flex h-14 sm:h-20 items-center justify-center overflow-hidden rounded-full bg-primary px-8 sm:px-16 font-bold text-[#050914] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_80px_rgba(0,212,255,0.6)]"
+                className="group relative inline-flex h-14 sm:h-20 items-center justify-center overflow-hidden rounded-full bg-primary px-8 sm:px-16 font-bold text-background transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_80px_rgba(0,212,255,0.6)]"
               >
                 <div className="absolute inset-0 flex h-full w-full justify-center [transform:skew(-12deg)_translateX(-150%)] group-hover:duration-1000 group-hover:[transform:skew(-12deg)_translateX(150%)]">
                   <div className="relative h-full w-20 bg-white/40 blur-sm" />
                 </div>
                 <span className="relative text-base sm:text-2xl tracking-widest uppercase flex items-center gap-2 sm:gap-4">
                   Empezar Ahora
-                  <div className="bg-[#050914] text-primary p-2 rounded-full transition-transform group-hover:translate-x-2">
+                  <div className="bg-background text-primary p-2 rounded-full transition-transform group-hover:translate-x-2">
                     <svg className="w-4 h-4 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                     </svg>

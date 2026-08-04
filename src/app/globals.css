@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
 :root {
-  --background: #050914; /* Azul oscuro intenso */
+  --background: #0b0c0e; /* Plomo carbón extra oscuro */
   --foreground: #f8fafc;
-  --surface: #0d1424;
+  --surface: #14161a; /* Plomo oscuro metálico */
   --primary: #00d4ff; /* Cian neón */
   --secondary: #2563eb; /* Azul profundo */
-  --muted: #94a3b8;
+  --muted: #8e9cae; /* Plomo claro para textos secundarios */
   --accent: #3b82f6;
 }
 
