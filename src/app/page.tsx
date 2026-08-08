@@ -197,7 +197,7 @@ export default function Home() {
               transition={{ duration: 0.8, delay: 0.5 }}
               className="text-slate-300 text-base sm:text-lg lg:text-xl font-light mb-10 leading-relaxed max-w-xl"
             >
-              Somos una empresa de <strong className="text-white">Soluciones de Personalización Digital Creativa</strong> que incluye servicios de <strong className="text-primary font-bold">sublimación</strong>, <strong className="text-primary font-bold">estampado</strong>, <strong className="text-primary font-bold">serigrafía</strong>, <strong className="text-primary font-bold">corte y grabado láser</strong>, diseñados para crear todo tipo de detalles únicos y especiales.
+              Somos una empresa de <strong className="text-white">Soluciones de Personalización Integral</strong> que incluye servicios de <strong className="text-primary font-bold">sublimación</strong>, <strong className="text-primary font-bold">estampado</strong>, <strong className="text-primary font-bold">serigrafía</strong>, <strong className="text-primary font-bold">corte y grabado láser</strong>, diseñados para crear todo tipo de detalles únicos y especiales.
             </motion.p>
 
             <motion.div
