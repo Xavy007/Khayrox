@@ -145,7 +145,7 @@ export default function Home() {
         >
           {/* Left Column (Text and Actions) */}
           <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left max-w-2xl">
-            {/* Contenedor de Badges en Fila */}
+            {/* Contenedor de Badges en Fila
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 mb-6">
               <motion.div
                 initial={{ opacity: 0, scale: 0.8, y: -20 }}
@@ -164,20 +164,24 @@ export default function Home() {
                 transition={{ duration: 1, delay: 0.2 }}
                 className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface/50 border border-primary/30 backdrop-blur-md shadow-[0_0_20px_rgba(212,175,55,0.2)] w-fit"
               >
-                <div className="relative w-4 h-4 rounded-md overflow-hidden border border-primary/40">
-                  <Image 
-                    src="/logo-icon.svg" 
-                    fill
-                    alt="KHAYROX Logo Icon" 
-                    className="object-cover"
-                  />
+                <div className="relative w-4 h-4 rounded-md overflow-hidden border border-primary/40 flex items-center justify-center p-0.5">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" className="w-full h-full">
+                    <path 
+                      d="M 32,34 L 45,34 C 55,42 68,54 78,68 C 68,68 52,58 32,34 Z" 
+                      fill="#ffffff" 
+                    />
+                    <path 
+                      d="M 25,75 L 40,75 L 75,25 L 60,25 Z" 
+                      fill="#d4af37" 
+                    />
+                  </svg>
                 </div>
                 <span className="text-[10px] font-mono font-bold tracking-wider text-primary uppercase">
                   Estudio Creativo
                 </span>
               </motion.div>
             </div>
-
+ */}
             <motion.h1
               initial={{ opacity: 0, filter: "blur(20px)" }}
               animate={{ opacity: 1, filter: "blur(0px)" }}

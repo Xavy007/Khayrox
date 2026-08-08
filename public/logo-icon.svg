@@ -1,16 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
-  <!-- Corrected KHAYROX Logo Symbol (Proper Orientation & Sleek Geometry) -->
+  <!-- Official KHAYROX Stylized X Logo Symbol (Clean Vector Paths) -->
   <g>
-    <!-- Gold Stem & Top-Right Arm (Forward slash + horizontal top wing) -->
+    <!-- White/Silver Slash (Backslash - Behind) -->
     <path 
-      d="M 22,72 L 35,72 L 55,42 L 75,42 L 83,30 L 48,30 Z" 
-      fill="#d4af37" 
-    />
-    
-    <!-- White Dynamic Swoosh (Backslash pointing down-right) -->
-    <path 
-      d="M 45,50 C 56,52 68,60 78,72 C 68,72 54,65 42,58 Z" 
+      d="M 32,34 L 45,34 C 55,42 68,54 78,68 C 68,68 52,58 32,34 Z" 
       fill="#ffffff" 
+    />
+    <!-- Gold Slash (Forward Slash - On Top) -->
+    <path 
+      d="M 25,75 L 40,75 L 75,25 L 60,25 Z" 
+      fill="#d4af37" 
     />
   </g>
 </svg>

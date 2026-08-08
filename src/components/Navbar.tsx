@@ -33,13 +33,19 @@ export default function Navbar() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative w-8 h-8 rounded-lg overflow-hidden border border-primary/40 shadow-[0_0_15px_rgba(212,175,55,0.35)] transition-transform duration-300 group-hover:scale-110">
-              <Image
-                src="/logo-icon.svg"
-                alt="Logo KHAYROX"
-                fill
-                className="object-cover"
-              />
+            <div className="relative w-8 h-8 rounded-lg overflow-hidden border border-primary/40 shadow-[0_0_15px_rgba(212,175,55,0.35)] transition-transform duration-300 group-hover:scale-110 flex items-center justify-center bg-surface p-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" className="w-full h-full">
+                {/* White Slash (Backslash) */}
+                <path 
+                  d="M 32,34 L 45,34 C 55,42 68,54 78,68 C 68,68 52,58 32,34 Z" 
+                  fill="#ffffff" 
+                />
+                {/* Gold Slash (Forward Slash) */}
+                <path 
+                  d="M 25,75 L 40,75 L 75,25 L 60,25 Z" 
+                  fill="#d4af37" 
+                />
+              </svg>
             </div>
             <span className="font-orbitron text-2xl font-black bg-gradient-to-r from-white via-[#d4af37] to-[#a37a24] bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(212,175,55,0.4)] tracking-widest transition-all duration-300 group-hover:drop-shadow-[0_0_25px_rgba(212,175,55,0.7)]">
               KHAYROX
