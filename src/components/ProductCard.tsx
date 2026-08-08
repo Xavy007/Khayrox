@@ -7,9 +7,9 @@ export default function ProductCard({ product }: { product: Product }) {
 
   return (
     <Link href={`/catalogo/${product.slug}`} className="group block">
-      <div className={`relative overflow-hidden rounded-xl border border-primary/10 bg-surface transition-all duration-300 ${
+      <div className={`relative overflow-hidden rounded-xl border border-primary/10 bg-surface transition-[border-color,box-shadow,opacity] duration-300 ${
         isAvailable 
-          ? 'hover:border-primary/50 hover:shadow-[0_0_20px_rgba(0,212,255,0.2)]' 
+          ? 'hover:border-primary/50 hover:shadow-[0_0_20px_rgba(184,209,45,0.2)]' 
           : 'opacity-65 hover:border-red-500/30'
       }`}>
         {/* Image Container */}
@@ -18,7 +18,7 @@ export default function ProductCard({ product }: { product: Product }) {
             src={product.images.find(img => img.is_primary)?.url || product.images[0]?.url || ''}
             alt={product.title}
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-110"
+            className="object-cover transition-transform duration-300 ease-out scale-100 transform-gpu will-change-transform group-hover:scale-110"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
           {/* Overlay gradient on hover */}

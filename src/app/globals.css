@@ -4,10 +4,10 @@
   --background: #0b0c0e; /* Plomo carbón extra oscuro */
   --foreground: #f8fafc;
   --surface: #14161a; /* Plomo oscuro metálico */
-  --primary: #00d4ff; /* Cian neón */
-  --secondary: #2563eb; /* Azul profundo */
+  --primary: #b8d12d; /* Amarillo limón del logo oficial */
+  --secondary: #1e88e5; /* Azul del logo oficial */
   --muted: #8e9cae; /* Plomo claro para textos secundarios */
-  --accent: #3b82f6;
+  --accent: #00d4ff; /* Cian neón para destellos y contraste */
 }
 
 @theme inline {

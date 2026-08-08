@@ -110,7 +110,7 @@ export default function Home() {
             background: useMotionTemplate`
               radial-gradient(
                 600px circle at ${mouseX}px ${mouseY}px,
-                rgba(0, 212, 255, 0.15),
+                rgba(184, 209, 45, 0.12),
                 transparent 80%
               )
             `,
@@ -127,7 +127,7 @@ export default function Home() {
 
         {/* Floating Geometric Elements (Abstract products) - Shifted left to prevent overlap */}
         <motion.div style={{ y: float1Y }} className="absolute top-[20%] left-[2%] z-0 hidden xl:block opacity-20">
-          <div className="w-32 h-32 rounded-3xl bg-gradient-to-tr from-primary/40 to-transparent border border-primary/20 backdrop-blur-md animate-[spin_20s_linear_infinite] shadow-[0_0_50px_rgba(0,212,255,0.2)]" />
+          <div className="w-32 h-32 rounded-3xl bg-gradient-to-tr from-primary/40 to-transparent border border-primary/20 backdrop-blur-md animate-[spin_20s_linear_infinite] shadow-[0_0_50px_rgba(184,209,45,0.25)]" />
         </motion.div>
 
         <motion.div style={{ y: float2Y }} className="absolute bottom-[20%] right-[10%] z-0 hidden lg:block opacity-30">
@@ -154,7 +154,7 @@ export default function Home() {
                 className="group relative inline-flex items-center rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-xs sm:text-sm text-primary backdrop-blur-xl overflow-hidden cursor-pointer"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/20 to-transparent -translate-x-[200%] group-hover:animate-[shimmer_2s_infinite]" />
-                <span className="flex h-2.5 w-2.5 rounded-full bg-primary animate-pulse mr-3 shadow-[0_0_10px_rgba(0,212,255,1)]"></span>
+                <span className="flex h-2.5 w-2.5 rounded-full bg-primary animate-pulse mr-3 shadow-[0_0_10px_rgba(184,209,45,1)]"></span>
                 <span className="font-medium tracking-wide">Colección 2026</span>
               </motion.div>
 
@@ -162,7 +162,7 @@ export default function Home() {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 1, delay: 0.2 }}
-                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface/50 border border-primary/30 backdrop-blur-md shadow-[0_0_20px_rgba(0,212,255,0.2)] w-fit"
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface/50 border border-primary/30 backdrop-blur-md shadow-[0_0_20px_rgba(184,209,45,0.2)] w-fit"
               >
                 <div className="relative w-4 h-4 rounded-md overflow-hidden border border-primary/40">
                   <Image 
@@ -182,7 +182,7 @@ export default function Home() {
               initial={{ opacity: 0, filter: "blur(20px)" }}
               animate={{ opacity: 1, filter: "blur(0px)" }}
               transition={{ duration: 1.2, delay: 0.1, ease: "easeOut" }}
-              className="text-4xl sm:text-7xl lg:text-8xl font-black tracking-widest bg-gradient-to-r from-white via-cyan-300 to-blue-500 bg-clip-text text-transparent font-orbitron mb-6 leading-tight drop-shadow-[0_0_30px_rgba(0,212,255,0.5)]"
+              className="text-4xl sm:text-7xl lg:text-8xl font-black tracking-widest bg-gradient-to-r from-white via-[#b8d12d] to-[#1e88e5] bg-clip-text text-transparent font-orbitron mb-6 leading-tight drop-shadow-[0_0_30px_rgba(184,209,45,0.4)]"
             >
               KHAYROX
             </motion.h1>
@@ -204,7 +204,7 @@ export default function Home() {
             >
               <Link
                 href="/catalogo"
-                className="group relative inline-flex h-14 sm:h-16 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-r from-primary to-blue-500 px-8 sm:px-10 font-bold text-background transition-all duration-300 hover:scale-105 hover:shadow-[0_0_45px_rgba(0,212,255,0.7)]"
+                className="group relative inline-flex h-14 sm:h-16 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-r from-primary to-secondary px-8 sm:px-10 font-bold text-background transition-all duration-300 hover:scale-105 hover:shadow-[0_0_45px_rgba(184,209,45,0.5)]"
               >
                 <div className="absolute inset-0 flex h-full w-full justify-center [transform:skew(-12deg)_translateX(-150%)] group-hover:duration-1000 group-hover:[transform:skew(-12deg)_translateX(150%)]">
                   <div className="relative h-full w-12 bg-white/40 blur-sm" />
@@ -231,7 +231,7 @@ export default function Home() {
             initial={{ opacity: 0, scale: 0.9, y: 30 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.4, type: "spring" }}
-            className="flex-1 w-full max-w-lg lg:max-w-none relative aspect-[4/3] sm:aspect-video lg:aspect-[4/3] rounded-3xl overflow-hidden border border-primary/30 shadow-[0_0_50px_rgba(0,212,255,0.2)] bg-surface"
+            className="flex-1 w-full max-w-lg lg:max-w-none relative aspect-[4/3] sm:aspect-video lg:aspect-[4/3] rounded-3xl overflow-hidden border border-primary/30 shadow-[0_0_50px_rgba(184,209,45,0.15)] bg-surface"
             style={{
               maskImage: 'linear-gradient(to right, transparent, black 15%)',
               WebkitMaskImage: 'linear-gradient(to right, transparent, black 15%)'
@@ -247,7 +247,7 @@ export default function Home() {
               alt="KHAYROX Premium Custom Products Showcase"
               fill
               priority
-              className="object-cover transition-transform duration-700 hover:scale-105"
+              className="object-cover transition-transform duration-500 ease-out scale-100 transform-gpu will-change-transform hover:scale-105"
               sizes="(max-width: 1024px) 100vw, 50vw"
             />
 
@@ -329,13 +329,13 @@ export default function Home() {
                 ref={card1Ref}
                 onMouseMove={(e) => handleTilt(e, card1Ref)}
                 onMouseLeave={() => handleTiltLeave(card1Ref)}
-                className="group relative h-full rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/0 p-8 backdrop-blur-2xl transition-transform duration-200 ease-out hover:border-primary/50 hover:shadow-[0_20px_50px_rgba(0,212,255,0.15)]"
+                className="group relative h-full rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/0 p-8 backdrop-blur-2xl transition-transform duration-200 ease-out hover:border-primary/50 hover:shadow-[0_20px_50px_rgba(184,209,45,0.15)]"
                 style={{ transformStyle: "preserve-3d" }}
               >
                 <div className="absolute -inset-0.5 rounded-3xl bg-gradient-to-br from-primary to-transparent opacity-0 group-hover:opacity-20 blur transition duration-500" style={{ transform: "translateZ(-10px)" }} />
 
                 <div style={{ transform: "translateZ(30px)" }}>
-                  <div className="mb-8 inline-flex p-4 rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/30 shadow-[0_0_20px_rgba(0,212,255,0.2)]">
+                  <div className="mb-8 inline-flex p-4 rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/30 shadow-[0_0_20px_rgba(184,209,45,0.2)]">
                     <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
                     </svg>
@@ -410,9 +410,9 @@ export default function Home() {
           transition={{ duration: 1, type: "spring", bounce: 0.3 }}
           className="container px-4 md:px-6 mx-auto max-w-5xl relative z-10"
         >
-          <div className="relative overflow-hidden rounded-3xl md:rounded-[3rem] border border-primary/30 bg-surface/40 backdrop-blur-xl md:backdrop-blur-3xl p-6 sm:p-16 md:p-24 text-center shadow-[0_0_100px_rgba(0,212,255,0.1)]">
+          <div className="relative overflow-hidden rounded-3xl md:rounded-[3rem] border border-primary/30 bg-surface/40 backdrop-blur-xl md:backdrop-blur-3xl p-6 sm:p-16 md:p-24 text-center shadow-[0_0_100px_rgba(184,209,45,0.08)]">
             {/* Animated internal gradient - Disabled on mobile to prevent GPU lag */}
-            <div className="absolute -inset-[100%] bg-[conic-gradient(from_90deg_at_50%_50%,#00000000_50%,#00d4ff_100%)] opacity-20 animate-[spin_5s_linear_infinite] hidden md:block" />
+            <div className="absolute -inset-[100%] bg-[conic-gradient(from_90deg_at_50%_50%,#00000000_50%,#b8d12d_100%)] opacity-20 animate-[spin_5s_linear_infinite] hidden md:block" />
             <div className="absolute inset-[2px] bg-surface/90 rounded-[calc(1.5rem-2px)] md:rounded-[calc(3rem-2px)] backdrop-blur-xl md:backdrop-blur-3xl" />
 
             <div className="relative z-10 flex flex-col items-center">
@@ -425,7 +425,7 @@ export default function Home() {
 
               <Link
                 href="/cotizador"
-                className="group relative inline-flex h-14 sm:h-20 items-center justify-center overflow-hidden rounded-full bg-primary px-8 sm:px-16 font-bold text-background transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_80px_rgba(0,212,255,0.6)]"
+                className="group relative inline-flex h-14 sm:h-20 items-center justify-center overflow-hidden rounded-full bg-primary px-8 sm:px-16 font-bold text-background transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_80px_rgba(184,209,45,0.45)]"
               >
                 <div className="absolute inset-0 flex h-full w-full justify-center [transform:skew(-12deg)_translateX(-150%)] group-hover:duration-1000 group-hover:[transform:skew(-12deg)_translateX(150%)]">
                   <div className="relative h-full w-20 bg-white/40 blur-sm" />
