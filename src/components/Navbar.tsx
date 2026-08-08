@@ -33,7 +33,7 @@ export default function Navbar() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative w-8 h-8 rounded-lg overflow-hidden border border-primary/40 shadow-[0_0_15px_rgba(184,209,45,0.35)] transition-transform duration-300 group-hover:scale-110">
+            <div className="relative w-8 h-8 rounded-lg overflow-hidden border border-primary/40 shadow-[0_0_15px_rgba(212,175,55,0.35)] transition-transform duration-300 group-hover:scale-110">
               <Image
                 src="/logo-icon.svg"
                 alt="Logo KHAYROX"
@@ -41,7 +41,7 @@ export default function Navbar() {
                 className="object-cover"
               />
             </div>
-            <span className="font-orbitron text-2xl font-black bg-gradient-to-r from-white via-[#b8d12d] to-[#1e88e5] bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(184,209,45,0.4)] tracking-widest transition-all duration-300 group-hover:drop-shadow-[0_0_25px_rgba(184,209,45,0.7)]">
+            <span className="font-orbitron text-2xl font-black bg-gradient-to-r from-white via-[#d4af37] to-[#a37a24] bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(212,175,55,0.4)] tracking-widest transition-all duration-300 group-hover:drop-shadow-[0_0_25px_rgba(212,175,55,0.7)]">
               KHAYROX
             </span>
           </Link>
@@ -50,7 +50,7 @@ export default function Navbar() {
             <Link
               href="/catalogo"
               className={`px-3 py-1 rounded-md border font-orbitron text-xs font-bold uppercase tracking-wider transition-all duration-300 ${isCatalogActive
-                ? 'text-primary bg-primary/10 border-primary/30 shadow-[0_0_15px_rgba(184,209,45,0.15)]'
+                ? 'text-primary bg-primary/10 border-primary/30 shadow-[0_0_15px_rgba(212,175,55,0.15)]'
                 : 'text-foreground/80 border-transparent hover:text-primary hover:bg-primary/5'
                 }`}
             >

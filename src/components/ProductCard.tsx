@@ -9,7 +9,7 @@ export default function ProductCard({ product }: { product: Product }) {
     <Link href={`/catalogo/${product.slug}`} className="group block">
       <div className={`relative overflow-hidden rounded-xl border border-primary/10 bg-surface transition-[border-color,box-shadow,opacity] duration-300 ${
         isAvailable 
-          ? 'hover:border-primary/50 hover:shadow-[0_0_20px_rgba(184,209,45,0.2)]' 
+          ? 'hover:border-primary/50 hover:shadow-[0_0_20px_rgba(212,175,55,0.2)]' 
           : 'opacity-65 hover:border-red-500/30'
       }`}>
         {/* Image Container */}

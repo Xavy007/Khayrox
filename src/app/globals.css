@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0b0c0e; /* Plomo carbón extra oscuro */
+  --background: #07080a; /* Negro obsidiana profundo */
   --foreground: #f8fafc;
-  --surface: #14161a; /* Plomo oscuro metálico */
-  --primary: #b8d12d; /* Amarillo limón del logo oficial */
-  --secondary: #1e88e5; /* Azul del logo oficial */
+  --surface: #13151a; /* Plomo oscuro metálico premium */
+  --primary: #d4af37; /* Dorado metálico elegante (Gold) */
+  --secondary: #a37a24; /* Bronce / Dorado envejecido */
   --muted: #8e9cae; /* Plomo claro para textos secundarios */
-  --accent: #00d4ff; /* Cian neón para destellos y contraste */
+  --accent: #ffd700; /* Oro brillante para destellos y contraste */
 }
 
 @theme inline {
