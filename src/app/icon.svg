@@ -8,9 +8,14 @@
   </defs>
   <!-- Official logo symbol with gold glow -->
   <g filter="url(#neon-glow)">
-    <!-- White Slash (Backslash) -->
+    <!-- Gold Top-Left Arm -->
     <path 
-      d="M 32,34 L 45,34 C 55,42 68,54 78,68 C 68,68 52,58 32,34 Z" 
+      d="M 25,25 L 40,25 L 54,39 L 39,39 Z" 
+      fill="#d4af37" 
+    />
+    <!-- White Dynamic Swoosh (Bottom-Right Arm) -->
+    <path 
+      d="M 45,49 C 56,51 68,60 78,72 C 68,72 54,65 43,56 Z" 
       fill="#ffffff" 
     />
     <!-- Gold Slash (Forward Slash) -->

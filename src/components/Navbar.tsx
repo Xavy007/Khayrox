@@ -35,9 +35,14 @@ export default function Navbar() {
           <Link href="/" className="flex items-center gap-3 group">
             <div className="relative w-8 h-8 rounded-lg overflow-hidden border border-primary/40 shadow-[0_0_15px_rgba(212,175,55,0.35)] transition-transform duration-300 group-hover:scale-110 flex items-center justify-center bg-surface p-1.5">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" className="w-full h-full">
-                {/* White Slash (Backslash) */}
+                {/* Gold Top-Left Arm */}
                 <path 
-                  d="M 32,34 L 45,34 C 55,42 68,54 78,68 C 68,68 52,58 32,34 Z" 
+                  d="M 25,25 L 40,25 L 54,39 L 39,39 Z" 
+                  fill="#d4af37" 
+                />
+                {/* White Dynamic Swoosh (Bottom-Right Arm) */}
+                <path 
+                  d="M 45,49 C 56,51 68,60 78,72 C 68,72 54,65 43,56 Z" 
                   fill="#ffffff" 
                 />
                 {/* Gold Slash (Forward Slash) */}
