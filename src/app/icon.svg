@@ -1,23 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
   <defs>
-    <!-- Cyberpunk cyan dropshadow for the neon glow effect -->
+    <!-- Premium gold dropshadow for the neon glow effect in tab icon -->
     <filter id="neon-glow" x="-50%" y="-50%" width="200%" height="200%">
-      <feDropShadow dx="0" dy="0" stdDeviation="1.2" flood-color="#00d4ff" flood-opacity="0.9" />
-      <feDropShadow dx="0" dy="0" stdDeviation="2.5" flood-color="#00d4ff" flood-opacity="0.5" />
+      <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#d4af37" flood-opacity="0.8" />
+      <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#d4af37" flood-opacity="0.4" />
     </filter>
   </defs>
-  <!-- Vector representation of the glowing overlapping bands -->
-  <g filter="url(#neon-glow)" stroke="#00d4ff" stroke-linecap="round" fill="none">
-    <!-- Diagonal 1: Main Line -->
-    <line x1="7" y1="7" x2="25" y2="25" stroke-width="2.2" />
-    <!-- Diagonal 1: Beaded/Glowing side nodes -->
-    <line x1="5" y1="9" x2="23" y2="27" stroke-width="1.2" stroke-dasharray="1 3.5" opacity="0.8" />
-    <line x1="9" y1="5" x2="27" y2="23" stroke-width="1.2" stroke-dasharray="1 3.5" opacity="0.8" />
-    
-    <!-- Diagonal 2: Main Line -->
-    <line x1="25" y1="7" x2="7" y2="25" stroke-width="2.2" />
-    <!-- Diagonal 2: Beaded/Glowing side nodes -->
-    <line x1="27" y1="9" x2="9" y2="27" stroke-width="1.2" stroke-dasharray="1 3.5" opacity="0.8" />
-    <line x1="23" y1="5" x2="5" y2="23" stroke-width="1.2" stroke-dasharray="1 3.5" opacity="0.8" />
+  <!-- Official logo symbol with gold glow -->
+  <g filter="url(#neon-glow)">
+    <!-- White Slash (Backslash) -->
+    <path 
+      d="M 32,34 L 45,34 C 55,42 68,54 78,68 C 68,68 52,58 32,34 Z" 
+      fill="#ffffff" 
+    />
+    <!-- Gold Slash (Forward Slash) -->
+    <path 
+      d="M 25,75 L 40,75 L 75,25 L 60,25 Z" 
+      fill="#d4af37" 
+    />
   </g>
 </svg>
